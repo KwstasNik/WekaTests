@@ -78,7 +78,11 @@ public class MainParser {
 		            writer.newLine();
 		            }
 		        }
+		        //this sequence[, '',] means the Line Has no data,
+		        //so it must be removed
+		        if (!line.contains(", '',")){
 		        lines.add(line);
+		        }
 		        line = in.readLine();
 		    }
 		    in.close();
