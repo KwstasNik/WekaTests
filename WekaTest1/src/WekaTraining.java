@@ -34,47 +34,59 @@ public class WekaTraining {
 
 
 	public static void main(String[] args) throws Exception {
-		
+		//VARIABLES
 		int DATA_ID=1;
-	//	String METHOD="NaiveBayesMultinomial";
+	//	String METHOD="NaiveBayesMultinomial" Cannot handle multi-valued nominal class;
 	//	String METHOD="SMO";
 		String METHOD="NaiveBayes";
+	//	String METHOD="J48";
+	//	String METHOD="LinearRegression" Cannot handle multi-valued nominal class;
+		
+		String QUERY_LEARN="SELECT message,class FROM  postclassified1000 ";
+	//String QUERY_LEARN="SELECT message,class FROM  postclassified1000 WHERE class !=  ''";
+		String QUERY_TEST="select  message,class from post100Testing";
+	//	String QUERY_TEST="select  message,class from post100Testing WHERE class !=  ''";
+	
+		 Instances data=null;
 	Boolean saveToDataBase =false;
 	 InstanceQuery query=null;	
-	int previousTextId=0;
-	if(saveToDataBase){
+//End Variables
+
 		  query = new InstanceQuery();
 		 query.setUsername("root");
 		 query.setPassword("");
-		 query.setQuery("select * from post");
+		 
+		// query.setQuery("SELECT message,class FROM  postclassified1000 WHERE class !=  ''");
+		 
+		 query.setQuery(QUERY_LEARN);
+			
 		 // You can declare that your data set is sparse
 		 // query.setSparseData(true);
-		 Instances data = query.retrieveInstances();
+		  data = query.retrieveInstances();
 		//System.out.println("Instance"+data.toString());
 			
-		 if (!data.isEmpty()){
-		 previousTextId=(int)data.get(data.size()-1).value(0);
-		 }
-	}
+		
+	
 		 
 		
 		
 		String ClassifierName=METHOD;
 		
-		//DataSource sourceTrain = new DataSource("trainingSet.arff");
+	//DataSource sourceTrain = new DataSource("trainingSet.arff");
 		
 		//Instances train = null;
-		train = sourceTrain.getDataSet();
-		
+	//	train = sourceTrain.getDataSet();
+		Instances train=data;
 		if (train.classIndex() == -1)
 			train.setClassIndex(train.numAttributes() - 1);
 
 	
 		StringToWordVector filter = new StringToWordVector();
 		filter.setOptions(
-			      weka.core.Utils.splitOptions("-R first-last -W 100000 " +
+			      weka.core.Utils.splitOptions("-R first-last -W 10000 " +
 			                                "-prune-rate -1.0 -T -I  -N 0 -stemmer " +
-			                                           "weka.core.stemmers.NullStemmer -M 1 " +
+			                                          // "weka.core.stemmers.NullStemmer
+			                                "-M 1 " +
 			                                          "-tokenizer \"weka.core.tokenizers.WordTokenizer \"" +
 			                                          "-delimiters \" \\r\\n\\t.,;:\\\'\\\"()?!\""));
 //    -R first-last -W 100000 -prune-rate -1.0 -T -I -N 0 -L -stemmer weka.core.stemmers.NullStemmer -M 1 -tokenizer "weka.core.tokenizers.WordTokenizer -delimiters \" \\r\\n\\t.,;:\\\'\\\"()?!\""	
@@ -149,13 +161,13 @@ public class WekaTraining {
 		 
 	
 		//save models
-		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ClassifierName+".model"+"Test"+(previousTextId+1)));
+		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ClassifierName+".model"+"Test"));
 		oos.writeObject(cModel);
 		oos.flush();
 		oos.close();
 		
 		//save filter
-		ObjectOutputStream oos1 = new ObjectOutputStream(new FileOutputStream(ClassifierName+"filter"+"Test"+(previousTextId+1)));
+		ObjectOutputStream oos1 = new ObjectOutputStream(new FileOutputStream(ClassifierName+"filter"+"Test"));
 		oos1.writeObject(filter);
 		oos1.flush();
 		oos1.close();
@@ -184,40 +196,17 @@ public class WekaTraining {
 			
 			if(!saveToDataBase){
 			System.out.println("different values " + counter);
+			try {
+				System.out.println( eTest.toClassDetailsString());
+				System.out.println(eTest.toMatrixString());
+				
 			
-			System.out.println("false positive -10 class " + eTest.falseNegativeRate(0));
-			System.out.println("false positive 0 class " + eTest.falseNegativeRate(1));
-			System.out.println("false positive 10 class " + eTest.falseNegativeRate(2) + "\n");
-			
-			System.out.println("false negative -10 class " + eTest.falsePositiveRate(0));
-			System.out.println("false negative 0 class " + eTest.falsePositiveRate(1));
-			System.out.println("false negative 10 class " + eTest.falsePositiveRate(2) + "\n");
-			
-			System.out.println("recall -10 class " + eTest.recall(0));
-			System.out.println("recall 0 class " + eTest.recall(1));
-			System.out.println("recall 10 class " + eTest.recall(2) + "\n");
-			
-			System.out.println("precision -10 class " + eTest.precision(0));
-			System.out.println("precision 0 class " + eTest.precision(1));
-			System.out.println("precision 10 class " + eTest.precision(2) + "\n");
-
-			System.out.println("fmeasure -10 class " + eTest.fMeasure(0));
-			System.out.println("fmeasure 0 class " + eTest.fMeasure(1));
-			System.out.println("fmeasure 10 class " + eTest.fMeasure(2));
-			
-			System.out.println("-----------------");
-			System.out.println("-----------------");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			 // Get a statement from the connection
-		    
-		      // Execute the query
-		      /*Connection conn = (Connection)DriverManager.getConnection("jdbc:mysql://localhost:3306/wekatest", "root", "");
-		      Statement stmt = (Statement) conn.createStatement() ;
-String querString="INSERT INTO 'wekatest'.'trainingstats' ( 'ExperId', 'Class_Id', 'falsePosit', 'falseNegat', 'recall', 'precision', 'fmeasure')" +
- 		" VALUES ('"+1+"', '"+1+"', '"+eTest.falseNegativeRate(0)+"', '"+eTest.falsePositiveRate(0)+"', '"+ eTest.recall(0)+"', '"+eTest.precision(0)+"', '"+ eTest.fMeasure(0)+"')";
-System.out.println(querString);		    
-int rs = stmt.executeUpdate(querString);*/
-		
+			}
+			 
 
 			 
 			
@@ -227,17 +216,27 @@ int rs = stmt.executeUpdate(querString);*/
 /////////////////////////////////////////////////////////////////////////////////////////////
 		// test NB with test set
 		System.out.println("classifier "+ClassifierName+" test set");
-		DataSource source1 = new DataSource("testSet.arff");
+	
+		//DataSource source1 = new DataSource("testSet.arff");
+	
 		Instances test = null;
-		test = source1.getDataSet();
+		InstanceQuery	testquery = new InstanceQuery();
+		testquery.setUsername("root");
+		testquery.setPassword("");
+			
+		//testquery.setQuery("select  message,class from post100Testing WHERE class !=  ''");
+		testquery.setQuery(QUERY_TEST);
+		 
+		  test = testquery.retrieveInstances();
+		
 		if (test.classIndex() == -1) {
 			test.setClassIndex(test.numAttributes() - 1);
 		}
 
-		Filter filter2 = (Filter) weka.core.SerializationHelper.read(ClassifierName+"filter"+"Test"+(previousTextId+1));
+		Filter filter2 = (Filter) weka.core.SerializationHelper.read(ClassifierName+"filter"+"Test");
 		Instances newTest1 = Filter.useFilter(test, filter2); 
 															
-		Classifier cModel1 = (Classifier) weka.core.SerializationHelper.read(ClassifierName+".model"+"Test"+(previousTextId+1));
+		Classifier cModel1 = (Classifier) weka.core.SerializationHelper.read(ClassifierName+".model"+"Test");
 
 		// Test the model
 		Evaluation eTest2 = new Evaluation(newTest1);
@@ -265,59 +264,28 @@ int rs = stmt.executeUpdate(querString);*/
 		}
 		MeanClassificationTime=(ClassificationTime/ eTest2.numInstances());
 		
-		if(saveToDataBase){
-		 String strg="INSERT INTO experiment(Id,ExperimentDescr, ExperimentDataId,ClassifierType,TrainingTime,ClassificationTime) VALUES ("+(previousTextId+1)+",'Test"+(previousTextId+1)+"',"+DATA_ID+",'"+ClassifierName+"',"+elapsedTrainingTime+","+MeanClassificationTime+")";
-			System.out.println(strg); 
-			query.update(strg);
-		 
-			
-			
-		for (int i=0;i<3;i++){
 		
-				 strg="INSERT INTO trainingstats(Id,ExperId, Class_Id, falsePosit,falseNegat,recall, `precision`,fmeasure) VALUES (Null,"+(previousTextId+1)+","+(i+1)+","+eTest.falsePositiveRate(i)+","+eTest.falseNegativeRate(i)+","+ eTest.recall(i)+","+eTest.precision(i)+","+eTest.fMeasure(i)+")";
-				System.out.println(strg); 
-				query.update(strg);
-			
-					
-			 strg="INSERT INTO testingstats(Id,ExperId, Class_Id, falsePosit,falseNegat,recall, `precision`,fmeasure) VALUES (Null,"+(previousTextId+1)+","+(i+1)+","+eTest2.falsePositiveRate(i)+","+eTest2.falseNegativeRate(i)+","+ eTest2.recall(i)+","+eTest2.precision(i)+","+eTest2.fMeasure(i)+")";
-			System.out.println(strg); 
-			query.update(strg);
+		
+			try {
+				System.out.println(eTest2.toClassDetailsString());
+				System.out.println(eTest2.toMatrixString());
+				
+				
+				
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			}
-		if(!saveToDataBase){
-		System.out.println("different values " + counter1);
-		System.out.println("false positive -10 class " + eTest2.falseNegativeRate(0));
-		System.out.println("false positive 0 class " + eTest2.falseNegativeRate(1));
-		System.out.println("false positive 10 class " + eTest2.falseNegativeRate(2) + "\n");
-		
-		System.out.println("false negative -10 class " + eTest2.falsePositiveRate(0));
-		System.out.println("false negative 0 class " + eTest2.falsePositiveRate(1));
-		System.out.println("false negative 10 class " + eTest2.falsePositiveRate(2) + "\n");
-		
-		System.out.println("recall -10 class " + eTest2.recall(0));
-		System.out.println("recall 0 class " + eTest2.recall(1));
-		System.out.println("recall 10 class " + eTest2.recall(2) + "\n");
-		
-		System.out.println("precision -10 class " + eTest2.precision(0));
-		System.out.println("precision 0 class " + eTest2.precision(1));
-		System.out.println("precision 10 class " + eTest2.precision(2) + "\n");
-
-		System.out.println("fmeasure -10 class " + eTest2.fMeasure(0));
-		System.out.println("fmeasure 0 class " + eTest2.fMeasure(1));
-		System.out.println("fmeasure 10 class " + eTest2.fMeasure(2));
-		
-		System.out.println("-----------------------------------------------------\n");
-	
-	//--------------------------------------------------------------------------
-	//-------------------------------------------------------------------------
+			
 		
 	
 	
 	//------------------------------------------------------------------------
 		System.out.println("-------------finished----------------------\n");
 		
-		RucCurveUtil.createCurve(eTest2,cModel,0 );
-		}
+		//RucCurveUtil.createCurve(eTest2,cModel,0 );
+		
 		
 		
 	}

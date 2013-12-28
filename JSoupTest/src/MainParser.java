@@ -27,8 +27,8 @@ public class MainParser {
 	/**
 	 * @param args
 	 */
-	static String INPUT_PATH="C:\\Users\\Kwstas\\Desktop\\gritzal\\comment.sql.txt";
-	static String OUPUT_PATH="C:\\Users\\Kwstas\\Desktop\\gritzal\\comments_out.sql.txt";
+	static String INPUT_PATH="C:\\Users\\Kwstas\\Desktop\\gritzal\\post.sql.txt";
+	static String OUPUT_PATH="C:\\Users\\Kwstas\\Desktop\\gritzal\\post.sql_out.sql.txt";
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
@@ -58,7 +58,7 @@ public class MainParser {
 		   // BufferedReader in = new BufferedReader(new FileReader( INPUT_PATH));
 		  BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(INPUT_PATH),"UTF-8"));  
 		  //  BufferedWriter log  = new BufferedWriter(new FileWriter( "C:\\Users\\Kwstas\\Desktop\\gritzal\\log.txt"));
-		    File logFile = new File("log.txt");
+		    File logFile = new File("logPost.txt");
 		    BufferedWriter writer = new BufferedWriter(new FileWriter(logFile));
 		    String line = in.readLine();
 		    int c=0;
@@ -104,7 +104,7 @@ public class MainParser {
 		    
 		    
 		    long elapsedTime = System.nanoTime() - start;
-		    writer.write("process Duration in millisecs:"+elapsedTime);
+		    writer.write("process Duration in nanosecs:"+elapsedTime);
 		    writer.close();
 			
 	  }
