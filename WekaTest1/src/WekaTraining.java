@@ -4,7 +4,10 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Timer;
+
+import javax.naming.InitialContext;
 
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.Statement;
@@ -35,23 +38,39 @@ public class WekaTraining {
 
 	public static void main(String[] args) throws Exception {
 		//VARIABLES
-		int DATA_ID=1;
+		int previousExpId=0;
+		
 	//	String METHOD="NaiveBayesMultinomial" Cannot handle multi-valued nominal class;
 	//	String METHOD="SMO";
 		String METHOD="NaiveBayes";
 	//	String METHOD="J48";
 	//	String METHOD="LinearRegression" Cannot handle multi-valued nominal class;
 		
+		
+		/*int DATA_ID=1;
 		String QUERY_LEARN="SELECT message,class FROM  postclassified1000 ";
-	//String QUERY_LEARN="SELECT message,class FROM  postclassified1000 WHERE class !=  ''";
-		String QUERY_TEST="select  message,class from post100Testing";
-	//	String QUERY_TEST="select  message,class from post100Testing WHERE class !=  ''";
+		String QUERY_TEST="select  message,class from post100Testing";*/
+		
+		int DATA_ID=2;
+		String QUERY_LEARN="SELECT message,class FROM  postclassified1000 WHERE class !=  '10'";
+		String QUERY_TEST="select  message,class from post100Testing WHERE class !=  '10'";
 	
+		String filterOptionsString="-R first-last -W 10000 " +
+                "-prune-rate -1.0 -T -I  -N 0 -stemmer " +
+                // "weka.core.stemmers.NullStemmer
+      "-M 1 " +
+                "-tokenizer \"weka.core.tokenizers.WordTokenizer \"" +
+                "-delimiters \" \\r\\n\\t.,;:\\\'\\\"()?!\"";
+		
 		 Instances data=null;
-	Boolean saveToDataBase =false;
+	Boolean saveToDataBase =true;
 	 InstanceQuery query=null;	
 //End Variables
-
+	 
+	 
+	
+	 
+	 
 		  query = new InstanceQuery();
 		 query.setUsername("root");
 		 query.setPassword("");
@@ -83,27 +102,25 @@ public class WekaTraining {
 	
 		StringToWordVector filter = new StringToWordVector();
 		filter.setOptions(
-			      weka.core.Utils.splitOptions("-R first-last -W 10000 " +
-			                                "-prune-rate -1.0 -T -I  -N 0 -stemmer " +
-			                                          // "weka.core.stemmers.NullStemmer
-			                                "-M 1 " +
-			                                          "-tokenizer \"weka.core.tokenizers.WordTokenizer \"" +
-			                                          "-delimiters \" \\r\\n\\t.,;:\\\'\\\"()?!\""));
+			      weka.core.Utils.splitOptions(filterOptionsString));
 //    -R first-last -W 100000 -prune-rate -1.0 -T -I -N 0 -L -stemmer weka.core.stemmers.NullStemmer -M 1 -tokenizer "weka.core.tokenizers.WordTokenizer -delimiters \" \\r\\n\\t.,;:\\\'\\\"()?!\""	
 	
 		 filter.setInputFormat(train);  // initializing the filter once with training set
 		 Instances newTrain = Filter.useFilter(train, filter);  // configures the Filter based on train instances and returns filtered instances
-		for (int i=0;i<10;i++){
+	/*	for (int i=0;i<10;i++){
 		 System.out.println(newTrain.get(i));
-		}
+		}*/
 		 Classifier cModel=null;
 		 RegSMO reg=null;
-		 
+		 System.out.println(" Reporting \n");
+		System.out.println("Filter Option String: "+filterOptionsString+"/n");
+			
 		 switch (METHOD)
 		 {
 		 case "NaiveBayesMultinomial":
 			 
 	    System.out.println("training NaiveBayesMultinomial");
+	    
 		 cModel=new NaiveBayesMultinomial();
 		 
 		 break;
@@ -199,7 +216,7 @@ public class WekaTraining {
 			try {
 				System.out.println( eTest.toClassDetailsString());
 				System.out.println(eTest.toMatrixString());
-				
+			
 			
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -265,20 +282,46 @@ public class WekaTraining {
 		MeanClassificationTime=(ClassificationTime/ eTest2.numInstances());
 		
 		
-		
+	
 			try {
 				System.out.println(eTest2.toClassDetailsString());
-				System.out.println(eTest2.toMatrixString());
 				
-				
-				
+			String stringBuffer=eTest2.toMatrixString();
+			
+			
+			
+			System.out.println(stringBuffer);
 				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
+		if(saveToDataBase)
+		{	String stringBuffer=eTest2.toMatrixString();
 		
+			ArrayList<String> classList=new ArrayList<>();
+			stringBuffer=stringBuffer.substring(stringBuffer.indexOf("|"));
+			stringBuffer=stringBuffer.replaceAll("\n", "|");
+			for (int i=0;i<eTest.confusionMatrix().length;i++)
+			{
+				classList.add(stringBuffer.substring(stringBuffer.indexOf("=")+1, stringBuffer.indexOf("|", stringBuffer.indexOf("|")+1)));
+				
+				stringBuffer=stringBuffer.substring(stringBuffer.indexOf("|", stringBuffer.indexOf("|")+1)+1);
+			}
+			
+			
+			InstanceQuery  queryExp = new InstanceQuery();
+			queryExp.setUsername("root");
+			queryExp.setPassword("");
+			queryExp.setQuery("SELECT Id from experiment order by id");
+				Instances  dataExp = queryExp.retrieveInstances();
+			 if (!dataExp.isEmpty()){
+				 previousExpId=(int)dataExp.get(dataExp.numInstances()-1).value(0);
+				 previousExpId=previousExpId+1;
+				 }
+			Helpers.saveMetricsToDatabase(eTest, eTest2, ClassifierName, elapsedTrainingTime, MeanClassificationTime, previousExpId, DATA_ID,query,classList);
+		}
 	
 	
 	//------------------------------------------------------------------------
