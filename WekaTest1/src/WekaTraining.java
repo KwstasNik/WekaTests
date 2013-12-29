@@ -192,18 +192,18 @@ public class WekaTraining {
 		System.out.println("-----\nclassifier testing using training set\n-----");
 		System.out.println("-----------------------------------\nclassifier" +ClassifierName);
 		 // Test the model
-		 Evaluation eTest = new Evaluation(newTrain);
-		 eTest.evaluateModel(cModel, newTrain);
+		 Evaluation eTestTraining = new Evaluation(newTrain);
+		 eTestTraining.evaluateModel(cModel, newTrain);
 
-		 String strSummary = eTest.toSummaryString();
+		 String strSummary = eTestTraining.toSummaryString();
 		 System.out.println(strSummary);
 		 
 		 // Get the confusion matrix
-		 double[][] cmMatrix = eTest.confusionMatrix();
+		 double[][] cmMatrix = eTestTraining.confusionMatrix();
 		 
-		 System.out.println("Eval instances: " + eTest.numInstances());
+		 System.out.println("Eval instances: " + eTestTraining.numInstances());
 			int counter = 0;
-			for (int i = 0; i < eTest.numInstances(); i++) {
+			for (int i = 0; i < eTestTraining.numInstances(); i++) {
 				double pred = cModel.classifyInstance(newTrain.instance(i));
 				if (newTrain.instance(i).classAttribute().value((int) newTrain.instance(i).classValue()).equals(newTrain.instance(i).classAttribute().value((int) pred))) {
 				} else {
@@ -214,8 +214,8 @@ public class WekaTraining {
 			if(!saveToDataBase){
 			System.out.println("different values " + counter);
 			try {
-				System.out.println( eTest.toClassDetailsString());
-				System.out.println(eTest.toMatrixString());
+				System.out.println( eTestTraining.toClassDetailsString());
+				System.out.println(eTestTraining.toMatrixString());
 			
 			
 			} catch (Exception e) {
@@ -256,19 +256,19 @@ public class WekaTraining {
 		Classifier cModel1 = (Classifier) weka.core.SerializationHelper.read(ClassifierName+".model"+"Test");
 
 		// Test the model
-		Evaluation eTest2 = new Evaluation(newTest1);
-		eTest2.evaluateModel(cModel1, newTest1);
-		String strSummary2 = eTest2.toSummaryString();
+		Evaluation eTestTesting = new Evaluation(newTest1);
+		eTestTesting.evaluateModel(cModel1, newTest1);
+		String strSummary2 = eTestTesting.toSummaryString();
 		System.out.println(strSummary2);
 
 		// Get the confusion matrix
-		double[][] cmMatrix2 = eTest2.confusionMatrix();
+		double[][] cmMatrix2 = eTestTesting.confusionMatrix();
 
-		System.out.println("Eval instances: " + eTest2.numInstances());
+		System.out.println("Eval instances: " + eTestTesting.numInstances());
 		int counter1 = 0;
 		double MeanClassificationTime=0;
 		int ClassificationTime=0;
-		for (int i = 0; i < eTest2.numInstances(); i++) {
+		for (int i = 0; i < eTestTesting.numInstances(); i++) {
 			
 			 start = System.nanoTime();  
 			double pred = cModel1.classifyInstance(newTest1.instance(i));
@@ -279,14 +279,14 @@ public class WekaTraining {
 				counter1++;
 			}
 		}
-		MeanClassificationTime=(ClassificationTime/ eTest2.numInstances());
+		MeanClassificationTime=(ClassificationTime/ eTestTesting.numInstances());
 		
 		
 	
 			try {
-				System.out.println(eTest2.toClassDetailsString());
+				System.out.println(eTestTesting.toClassDetailsString());
 				
-			String stringBuffer=eTest2.toMatrixString();
+			String stringBuffer=eTestTesting.toMatrixString();
 			
 			
 			
@@ -298,18 +298,8 @@ public class WekaTraining {
 			}
 			
 		if(saveToDataBase)
-		{	String stringBuffer=eTest2.toMatrixString();
-		
-			ArrayList<String> classList=new ArrayList<>();
-			stringBuffer=stringBuffer.substring(stringBuffer.indexOf("|"));
-			stringBuffer=stringBuffer.replaceAll("\n", "|");
-			for (int i=0;i<eTest.confusionMatrix().length;i++)
-			{
-				classList.add(stringBuffer.substring(stringBuffer.indexOf("=")+1, stringBuffer.indexOf("|", stringBuffer.indexOf("|")+1)));
+		{	
 				
-				stringBuffer=stringBuffer.substring(stringBuffer.indexOf("|", stringBuffer.indexOf("|")+1)+1);
-			}
-			
 			
 			InstanceQuery  queryExp = new InstanceQuery();
 			queryExp.setUsername("root");
@@ -320,7 +310,10 @@ public class WekaTraining {
 				 previousExpId=(int)dataExp.get(dataExp.numInstances()-1).value(0);
 				 previousExpId=previousExpId+1;
 				 }
-			Helpers.saveMetricsToDatabase(eTest, eTest2, ClassifierName, elapsedTrainingTime, MeanClassificationTime, previousExpId, DATA_ID,query,classList);
+			 Helpers.saveTrainingMetricsToDatabase(eTestTraining, ClassifierName, elapsedTrainingTime, MeanClassificationTime, previousExpId, DATA_ID, queryExp,Helpers.createClassList(eTestTraining));
+				
+			Helpers.saveTestingMetricsToDatabase(eTestTesting, ClassifierName, elapsedTrainingTime, MeanClassificationTime, previousExpId, DATA_ID, queryExp,Helpers.createClassList(eTestTesting));
+	
 		}
 	
 	

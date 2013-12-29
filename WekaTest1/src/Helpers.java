@@ -1,3 +1,4 @@
+import java.awt.List;
 import java.util.ArrayList;
 
 import com.mysql.jdbc.Statement;
@@ -13,14 +14,34 @@ public  class Helpers {
 		
 	}
 	
+	
+	public static ArrayList<String> createClassList(weka.classifiers.Evaluation eTest2) throws Exception
+	{//Class List Provides a mapping between class indexes
+     //tha are use by weka and the classes tha are saved in database
+		ArrayList<String> classList=new ArrayList<>();
+		
+		String stringBuffer=eTest2.toMatrixString();
+		
+		stringBuffer=stringBuffer.substring(stringBuffer.indexOf("|"));
+		stringBuffer=stringBuffer.replaceAll("\n", "|");
+		for (int i=0;i<eTest2.confusionMatrix().length;i++)
+		{
+			classList.add(stringBuffer.substring(stringBuffer.indexOf("=")+1, stringBuffer.indexOf("|", stringBuffer.indexOf("|")+1)));
+			
+			stringBuffer=stringBuffer.substring(stringBuffer.indexOf("|", stringBuffer.indexOf("|")+1)+1);
+		}
+		
+	return 	classList;
+	}
+	
 	public static int getClassIdFromClassIndex(int classIndex,ArrayList<String> classList)
 	{
 		return Integer.parseInt(classList.get(classIndex).trim());
 		
 	}
 	
-	public static void saveMetricsToDatabase(weka.classifiers.Evaluation trainingTest
-			,weka.classifiers.Evaluation testingTest,String ClassifierName,
+	public static void saveTrainingMetricsToDatabase(weka.classifiers.Evaluation trainingTest
+			,String ClassifierName,
 			long elapsedTrainingTime, double MeanClassificationTime,
 			int previousTextId,int DATA_ID,InstanceQuery query,ArrayList<String> classList) throws Exception {
 
@@ -54,6 +75,44 @@ public  class Helpers {
 				
 					 strg="INSERT INTO trainingconfusionmatrix(Id,ExperimentId, ClassId,TP, TN, FP,FN) VALUES ("+0  +","+(previousTextId)+","+((getClassIdFromClassIndex(i,classList)))+","+trainingTest.numTruePositives(i)+","+trainingTest.numTrueNegatives(i)+","+ +trainingTest.numFalsePositives(i)+","+trainingTest.numFalseNegatives(i)+")";	
 					 query.update(strg);	
+					 
+			/*	 strg="INSERT INTO testingstats(Id,ExperId, Class_Id, falsePosit,falseNegat,recall, `precision`,fmeasure) VALUES ("+0 +","+(previousTextId)+","+((getClassIdFromClassIndex(i,classList)))+","+testingTest.falsePositiveRate(i)+","+testingTest.falseNegativeRate(i)+","+ testingTest.recall(i)+","+testingTest.precision(i)+","+testingTest.fMeasure(i)+")";
+				 query.update(strg);
+				 
+				 strg="INSERT INTO testingconfusionmatrix(Id,ExperimentId, ClassId,TP, TN, FP,FN) VALUES ("+0  +","+(previousTextId)+","+(i)+","+testingTest.numTruePositives((getClassIdFromClassIndex(i,classList)))+","+testingTest.numTrueNegatives(i)+","+ +testingTest.numFalsePositives(i)+","+testingTest.numFalseNegatives(i)+")";			
+				System.out.println(strg); 
+				query.update(strg);*/
+				}
+				
+	}
+	
+	public static void saveTestingMetricsToDatabase(weka.classifiers.Evaluation testingTest,String ClassifierName,
+			long elapsedTrainingTime, double MeanClassificationTime,
+			int previousTextId,int DATA_ID,InstanceQuery query,ArrayList<String> classList) throws Exception {
+
+	/*	0		irrelevant		10       
+		1		Sports		0
+		2		Politics		2
+		3		Music		1
+		4		news		3
+		
+		    πρέπει οι κλάσεις στη βάση να έχουν αυτή τη σειρά 
+		    αν γιατι τα ids ειναι τα class indexes στους πινακεσ
+		    και αν αυτά αλλαξουν θα πρέπει να αλλαχτουν και στους πίνακες της 
+		    βάσης*/
+
+		
+		
+		
+			
+		
+			 String strg=null;
+			 
+				
+				
+			for (int i=0;i<testingTest.confusionMatrix().length;i++){
+			
+				
 					 
 				 strg="INSERT INTO testingstats(Id,ExperId, Class_Id, falsePosit,falseNegat,recall, `precision`,fmeasure) VALUES ("+0 +","+(previousTextId)+","+((getClassIdFromClassIndex(i,classList)))+","+testingTest.falsePositiveRate(i)+","+testingTest.falseNegativeRate(i)+","+ testingTest.recall(i)+","+testingTest.precision(i)+","+testingTest.fMeasure(i)+")";
 				 query.update(strg);
