@@ -51,10 +51,22 @@ public class WekaTraining {
 		String QUERY_LEARN="SELECT message,class FROM  postclassified1000 ";
 		String QUERY_TEST="select  message,class from post100Testing";*/
 		
-		int DATA_ID=2;
-		String QUERY_LEARN="SELECT message,class FROM  postclassified1000 WHERE class !=  '10'";
-		String QUERY_TEST="select  message,class from post100Testing WHERE class !=  '10'";
-	
+	//	int DATA_ID=2;
+	//	String QUERY_LEARN="SELECT message,class FROM  postclassified1000 WHERE class !=  '10'";
+	//	String QUERY_TEST="select  message,class from post100Testing WHERE class !=  '10'";
+		
+	//	int DATA_ID=3;
+		//String QUERY_LEARN="SELECT message,class FROM  postclassified1000 WHERE class !=  '10'";
+	//	String QUERY_TEST="select  message,class from post500Testing WHERE class !=  '10'";
+		
+		int DATA_ID=4;
+		String QUERY_LEARN="SELECT message,class FROM  postclassified1000stemmed WHERE class !=  '10'";
+		String QUERY_TEST="select  message,class from post500TestingStemmed WHERE class !=  '10'";
+		
+		
+		
+		Boolean saveToDataBase =false;
+		
 		String filterOptionsString="-R first-last -W 10000 " +
                 "-prune-rate -1.0 -T -I  -N 0 -stemmer " +
                 // "weka.core.stemmers.NullStemmer
@@ -63,8 +75,8 @@ public class WekaTraining {
                 "-delimiters \" \\r\\n\\t.,;:\\\'\\\"()?!\"";
 		
 		 Instances data=null;
-	Boolean saveToDataBase =true;
-	 InstanceQuery query=null;	
+		 String comment="1000 enties For Training 500 For testing without irrelevant entries. Bad Results";
+		 InstanceQuery query=null;	
 //End Variables
 	 
 	 
@@ -178,13 +190,13 @@ public class WekaTraining {
 		 
 	
 		//save models
-		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ClassifierName+".model"+"Test"));
+		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ClassifierName+".model"+DATA_ID+METHOD));
 		oos.writeObject(cModel);
 		oos.flush();
 		oos.close();
 		
 		//save filter
-		ObjectOutputStream oos1 = new ObjectOutputStream(new FileOutputStream(ClassifierName+"filter"+"Test"));
+		ObjectOutputStream oos1 = new ObjectOutputStream(new FileOutputStream(ClassifierName+"filter"+"Test"+DATA_ID+METHOD));
 		oos1.writeObject(filter);
 		oos1.flush();
 		oos1.close();
@@ -310,7 +322,7 @@ public class WekaTraining {
 				 previousExpId=(int)dataExp.get(dataExp.numInstances()-1).value(0);
 				 previousExpId=previousExpId+1;
 				 }
-			 Helpers.saveTrainingMetricsToDatabase(eTestTraining, ClassifierName, elapsedTrainingTime, MeanClassificationTime, previousExpId, DATA_ID, queryExp,Helpers.createClassList(eTestTraining));
+			 Helpers.saveTrainingMetricsToDatabase(eTestTraining, ClassifierName, elapsedTrainingTime, MeanClassificationTime, previousExpId, DATA_ID, queryExp,Helpers.createClassList(eTestTraining), comment);
 				
 			Helpers.saveTestingMetricsToDatabase(eTestTesting, ClassifierName, elapsedTrainingTime, MeanClassificationTime, previousExpId, DATA_ID, queryExp,Helpers.createClassList(eTestTesting));
 	

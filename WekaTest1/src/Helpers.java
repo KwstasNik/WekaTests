@@ -1,5 +1,6 @@
 import java.awt.List;
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.mysql.jdbc.Statement;
 
@@ -43,7 +44,7 @@ public  class Helpers {
 	public static void saveTrainingMetricsToDatabase(weka.classifiers.Evaluation trainingTest
 			,String ClassifierName,
 			long elapsedTrainingTime, double MeanClassificationTime,
-			int previousTextId,int DATA_ID,InstanceQuery query,ArrayList<String> classList) throws Exception {
+			int previousTextId,int DATA_ID,InstanceQuery query,ArrayList<String> classList,String Comments) throws Exception {
 
 	/*	0		irrelevant		10       
 		1		Sports		0
@@ -61,7 +62,9 @@ public  class Helpers {
 		
 			
 		
-			 String strg="INSERT INTO experiment(Id,ExperimentDescr, ExperimentDataId,ClassifierType,TrainingTime,ClassificationTime) VALUES ("+(previousTextId)+",'Test"+(previousTextId)+"',"+DATA_ID+",'"+ClassifierName+"',"+elapsedTrainingTime+","+MeanClassificationTime+")";
+			 String strg="INSERT INTO experiment(Id,ExperimentDescr, ExperimentDataId,ClassifierType,TrainingTime,ClassificationTime,DateTime, Comment) VALUES ("+
+			 (previousTextId)+",'Test"+(previousTextId)+"',"+DATA_ID+",'"+ClassifierName+"',"+elapsedTrainingTime+","
+					 +MeanClassificationTime+",'"+new Date().toString()+"','"+Comments+"')";
 				System.out.println(strg); 
 				query.update(strg);
 			 
