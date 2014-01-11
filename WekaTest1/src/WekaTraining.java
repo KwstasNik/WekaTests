@@ -59,14 +59,31 @@ public class WekaTraining {
 		//String QUERY_LEARN="SELECT message,class FROM  postclassified1000 WHERE class !=  '10'";
 	//	String QUERY_TEST="select  message,class from post500Testing WHERE class !=  '10'";
 		
-		int DATA_ID=4;
-		String QUERY_LEARN="SELECT message,class FROM  postclassified1000stemmed WHERE class !=  '10'";
-		String QUERY_TEST="select  message,class from post500TestingStemmed WHERE class !=  '10'";
+		/*int DATA_ID=4;
+		String QUERY_LEARN="SELECT message,class FROM  postclassified1000stemmed  ";
+		String QUERY_TEST="select  message,class from post500TestingStemmed ";*/
 		
 		
-		
-		Boolean saveToDataBase =false;
-		
+		/*	int DATA_ID=5;
+			String QUERY_LEARN="SELECT message,class FROM  postclassified1000 ";
+			String QUERY_TEST="select  message,class from post500Testing";*/
+			
+		/*	int DATA_ID=6;
+			String QUERY_LEARN="SELECT message,class FROM  postclassified500vag where class!=10	 union" +
+					"	select  message,class from postclassified1000	where class!=10";
+			String QUERY_TEST="select  message,class from post500Testing where class!=10";
+			*/
+			
+			int DATA_ID=7;
+			String QUERY_LEARN="SELECT message,class FROM  postclassified500vag  union " +
+					"	select  message,class from postclassified1000	where class!=10 union "+
+					"select  message,class from post300SotClassified	where class ";
+			String QUERY_TEST="select  message,class from post500Testing where class";
+			
+		Boolean saveToDataBase =true;
+		 String comment=" training 1800 testing 500 and of those 612 irrelevant class Bad results";
+			
+		 
 		String filterOptionsString="-R first-last -W 10000 " +
                 "-prune-rate -1.0 -T -I  -N 0 -stemmer " +
                 // "weka.core.stemmers.NullStemmer
@@ -75,7 +92,6 @@ public class WekaTraining {
                 "-delimiters \" \\r\\n\\t.,;:\\\'\\\"()?!\"";
 		
 		 Instances data=null;
-		 String comment="1000 enties For Training 500 For testing without irrelevant entries. Bad Results";
 		 InstanceQuery query=null;	
 //End Variables
 	 
@@ -223,7 +239,7 @@ public class WekaTraining {
 				}
 			}
 			
-			if(!saveToDataBase){
+		
 			System.out.println("different values " + counter);
 			try {
 				System.out.println( eTestTraining.toClassDetailsString());
@@ -233,7 +249,7 @@ public class WekaTraining {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			
 			}
 			 
 
@@ -262,10 +278,10 @@ public class WekaTraining {
 			test.setClassIndex(test.numAttributes() - 1);
 		}
 
-		Filter filter2 = (Filter) weka.core.SerializationHelper.read(ClassifierName+"filter"+"Test");
+		Filter filter2 = (Filter) weka.core.SerializationHelper.read(ClassifierName+"filter"+"Test"+DATA_ID+METHOD);
 		Instances newTest1 = Filter.useFilter(test, filter2); 
 															
-		Classifier cModel1 = (Classifier) weka.core.SerializationHelper.read(ClassifierName+".model"+"Test");
+		Classifier cModel1 = (Classifier) weka.core.SerializationHelper.read( ClassifierName+".model"+DATA_ID+METHOD);
 
 		// Test the model
 		Evaluation eTestTesting = new Evaluation(newTest1);
@@ -297,7 +313,7 @@ public class WekaTraining {
 	
 			try {
 				System.out.println(eTestTesting.toClassDetailsString());
-				
+			
 			String stringBuffer=eTestTesting.toMatrixString();
 			
 			
@@ -322,7 +338,7 @@ public class WekaTraining {
 				 previousExpId=(int)dataExp.get(dataExp.numInstances()-1).value(0);
 				 previousExpId=previousExpId+1;
 				 }
-			 Helpers.saveTrainingMetricsToDatabase(eTestTraining, ClassifierName, elapsedTrainingTime, MeanClassificationTime, previousExpId, DATA_ID, queryExp,Helpers.createClassList(eTestTraining), comment);
+			 Helpers.saveTrainingMetricsToDatabase(eTestTraining, ClassifierName, elapsedTrainingTime, MeanClassificationTime, previousExpId, DATA_ID, queryExp,Helpers.createClassList(eTestTraining), comment,filterOptionsString);
 				
 			Helpers.saveTestingMetricsToDatabase(eTestTesting, ClassifierName, elapsedTrainingTime, MeanClassificationTime, previousExpId, DATA_ID, queryExp,Helpers.createClassList(eTestTesting));
 	

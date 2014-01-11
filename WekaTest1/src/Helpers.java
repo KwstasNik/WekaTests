@@ -44,27 +44,23 @@ public  class Helpers {
 	public static void saveTrainingMetricsToDatabase(weka.classifiers.Evaluation trainingTest
 			,String ClassifierName,
 			long elapsedTrainingTime, double MeanClassificationTime,
-			int previousTextId,int DATA_ID,InstanceQuery query,ArrayList<String> classList,String Comments) throws Exception {
+			int previousTextId,int DATA_ID,InstanceQuery query,ArrayList<String> classList,String Comments,String Filter) throws Exception {
 
 	/*	0		irrelevant		10       
 		1		Sports		0
 		2		Politics		2
 		3		Music		1
 		4		news		3
-		
-		    πρέπει οι κλάσεις στη βάση να έχουν αυτή τη σειρά 
-		    αν γιατι τα ids ειναι τα class indexes στους πινακεσ
-		    και αν αυτά αλλαξουν θα πρέπει να αλλαχτουν και στους πίνακες της 
-		    βάσης*/
+		*/
 
 		
 		
 		
 			
 		
-			 String strg="INSERT INTO experiment(Id,ExperimentDescr, ExperimentDataId,ClassifierType,TrainingTime,ClassificationTime,DateTime, Comment) VALUES ("+
+			 String strg="INSERT INTO experiment(Id,ExperimentDescr, ExperimentDataId,ClassifierType,TrainingTime,ClassificationTime,DateTime, Comment,Filter) VALUES ("+
 			 (previousTextId)+",'Test"+(previousTextId)+"',"+DATA_ID+",'"+ClassifierName+"',"+elapsedTrainingTime+","
-					 +MeanClassificationTime+",'"+new Date().toString()+"','"+Comments+"')";
+					 +MeanClassificationTime+",'"+new Date().toString()+"','"+Comments+"','"+Filter+"')";
 				System.out.println(strg); 
 				query.update(strg);
 			 
@@ -72,22 +68,24 @@ public  class Helpers {
 				
 			for (int i=0;i<trainingTest.confusionMatrix().length;i++){
 			
-					 strg="INSERT INTO trainingstats(Id,ExperId, Class_Id, falsePosit,falseNegat,recall, `precision`,fmeasure) VALUES ("+0 +","+(previousTextId)+","+(getClassIdFromClassIndex(i,classList))+","+trainingTest.falsePositiveRate(i)+","+trainingTest.falseNegativeRate(i)+","+ trainingTest.recall(i)+","+trainingTest.precision(i)+","+trainingTest.fMeasure(i)+")";
+					 strg="INSERT INTO trainingstats(Id,ExperId, Class_Id, truePosit,trueNegat, falsePosit,falseNegat,recall, `precision`,fmeasure) VALUES ("+0 +
+							 ","+(previousTextId)+","+(getClassIdFromClassIndex(i,classList))+","+
+							 trainingTest.truePositiveRate(i)+","+trainingTest.trueNegativeRate(i)+","+
+							 trainingTest.falsePositiveRate(i)+","+trainingTest.falseNegativeRate(i)+","+
+							 trainingTest.recall(i)+","+trainingTest.precision(i)+","+trainingTest.fMeasure(i)+")";
 					System.out.println(strg); 
 					query.update(strg);
 				
 					 strg="INSERT INTO trainingconfusionmatrix(Id,ExperimentId, ClassId,TP, TN, FP,FN) VALUES ("+0  +","+(previousTextId)+","+((getClassIdFromClassIndex(i,classList)))+","+trainingTest.numTruePositives(i)+","+trainingTest.numTrueNegatives(i)+","+ +trainingTest.numFalsePositives(i)+","+trainingTest.numFalseNegatives(i)+")";	
+					 System.out.println(strg);
 					 query.update(strg);	
 					 
-			/*	 strg="INSERT INTO testingstats(Id,ExperId, Class_Id, falsePosit,falseNegat,recall, `precision`,fmeasure) VALUES ("+0 +","+(previousTextId)+","+((getClassIdFromClassIndex(i,classList)))+","+testingTest.falsePositiveRate(i)+","+testingTest.falseNegativeRate(i)+","+ testingTest.recall(i)+","+testingTest.precision(i)+","+testingTest.fMeasure(i)+")";
-				 query.update(strg);
-				 
-				 strg="INSERT INTO testingconfusionmatrix(Id,ExperimentId, ClassId,TP, TN, FP,FN) VALUES ("+0  +","+(previousTextId)+","+(i)+","+testingTest.numTruePositives((getClassIdFromClassIndex(i,classList)))+","+testingTest.numTrueNegatives(i)+","+ +testingTest.numFalsePositives(i)+","+testingTest.numFalseNegatives(i)+")";			
-				System.out.println(strg); 
-				query.update(strg);*/
+			
 				}
-				
-	}
+		
+			
+			
+					}
 	
 	public static void saveTestingMetricsToDatabase(weka.classifiers.Evaluation testingTest,String ClassifierName,
 			long elapsedTrainingTime, double MeanClassificationTime,
@@ -117,13 +115,30 @@ public  class Helpers {
 			
 				
 					 
-				 strg="INSERT INTO testingstats(Id,ExperId, Class_Id, falsePosit,falseNegat,recall, `precision`,fmeasure) VALUES ("+0 +","+(previousTextId)+","+((getClassIdFromClassIndex(i,classList)))+","+testingTest.falsePositiveRate(i)+","+testingTest.falseNegativeRate(i)+","+ testingTest.recall(i)+","+testingTest.precision(i)+","+testingTest.fMeasure(i)+")";
+				 strg="INSERT INTO testingstats(Id,ExperId, Class_Id,truePosit,trueNegat, falsePosit,falseNegat,recall, `precision`,fmeasure) VALUES ("+0 +","+(previousTextId)+
+						 ","+((getClassIdFromClassIndex(i,classList)))+
+						  ","+testingTest.truePositiveRate(i)+ ","+testingTest.trueNegativeRate(i)+
+						 ","+testingTest.falsePositiveRate(i)+ ","+testingTest.falseNegativeRate(i)+
+						 ","+ testingTest.recall(i)+","+testingTest.precision(i)+
+						 ","+testingTest.fMeasure(i)+")";
 				 query.update(strg);
 				 
-				 strg="INSERT INTO testingconfusionmatrix(Id,ExperimentId, ClassId,TP, TN, FP,FN) VALUES ("+0  +","+(previousTextId)+","+(i)+","+testingTest.numTruePositives((getClassIdFromClassIndex(i,classList)))+","+testingTest.numTrueNegatives(i)+","+ +testingTest.numFalsePositives(i)+","+testingTest.numFalseNegatives(i)+")";			
+				 strg="INSERT INTO testingconfusionmatrix(Id,ExperimentId, ClassId,TP, TN, FP,FN) VALUES ("+0  +","+(previousTextId)+","+(getClassIdFromClassIndex(i,classList))+","+testingTest.numTruePositives(i)+","+testingTest.numTrueNegatives(i)+","+ +testingTest.numFalsePositives(i)+","+testingTest.numFalseNegatives(i)+")";			
 				System.out.println(strg); 
 				query.update(strg);
 				}
+			//Save WEIGHTED AVERAGE
+			 strg="INSERT INTO weightAvgteststats(Id,ExperId,truePosit,trueNegat,  falsePosit,falseNegat,recall, `precision`,fmeasure) VALUES ("+0 +","+(previousTextId)+","+
+					 testingTest.weightedTruePositiveRate()+
+					  ","+testingTest.weightedTrueNegativeRate()+
+					 ","+testingTest.weightedFalsePositiveRate()+
+					  ","+testingTest.weightedFalseNegativeRate()+
+					    ","+testingTest.weightedRecall()+
+					     ","+testingTest.weightedPrecision()+
+					       ","+testingTest.weightedFMeasure()+
+					 ")";
+				System.out.println(strg); 
+				query.update(strg);
 				
 	}
 	
