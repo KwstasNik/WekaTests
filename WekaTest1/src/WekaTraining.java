@@ -1,5 +1,6 @@
 
 
+import java.awt.Frame;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.sql.DriverManager;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Timer;
 
 import javax.naming.InitialContext;
+import javax.swing.JOptionPane;
 
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.Statement;
@@ -26,11 +28,14 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.NominalToString;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 import weka.filters.unsupervised.attribute.SortLabels.CaseInsensitiveComparator;
+import weka.gui.SaveBuffer;
 import weka.gui.treevisualizer.TreeBuild;
 import weka.classifiers.trees.J48; 
 import weka.core.Instances;
+import weka.datagenerators.Test;
 import weka.experiment.InstanceQuery;
 
 public class WekaTraining {
@@ -41,8 +46,8 @@ public class WekaTraining {
 		int previousExpId=0;
 		
 	//	String METHOD="NaiveBayesMultinomial" Cannot handle multi-valued nominal class;
-	//	String METHOD="SMO";
-		String METHOD="NaiveBayes";
+		String METHOD="SMO";
+	//	String METHOD="NaiveBayes";
 	//	String METHOD="J48";
 	//	String METHOD="LinearRegression" Cannot handle multi-valued nominal class;
 		
@@ -74,29 +79,95 @@ public class WekaTraining {
 			String QUERY_TEST="select  message,class from post500Testing where class!=10";
 			*/
 			
-			int DATA_ID=7;
+		/*	int DATA_ID=7;
 			String QUERY_LEARN="SELECT message,class FROM  postclassified500vag  union " +
 					"	select  message,class from postclassified1000	where class!=10 union "+
-					"select  message,class from post300SotClassified	where class ";
-			String QUERY_TEST="select  message,class from post500Testing where class";
+					"select  message,class from post300SotClassified";
+			String QUERY_TEST="select  message,class from post500Testing where class";*/
 			
-		Boolean saveToDataBase =true;
-		 String comment=" training 1800 testing 500 and of those 612 irrelevant class Bad results";
+			/*int DATA_ID=8;
+			String QUERY_LEARN="SELECT message,class FROM  postclassified500vag  union " +
+					"	select  message,class from postclassified1000	where class!=10 union "+
+					"	select  message,class from postClassified1500to2000	where class!=10 union "+
+					"select  message,class from post300SotClassified ";
+			String QUERY_TEST="select  message,class from post500Testing ";*/
+			
+			/*int DATA_ID=9;
+			String QUERY_LEARN="SELECT message,class FROM  postclassified500vag  where class!=10 union " +
+					" select  message,class from postclassified1000	where class!=10 union "+
+					"	select  message,class from postClassified1500to2000	where class!=10 union "+
+					"select  message,class from post300SotClassified where class!=10 union "+
+					"(select   message,class from post300SotClassified where class=10 LIMIT 100)";
+			
+			String QUERY_TEST="select  message,class from post500Testing ";*/
+			
+		/*int DATA_ID=10;
+		String QUERY_LEARN="SELECT message,class FROM  postclassified500vag  where class!=10 union " +
+				" select  message,class from postclassified1000	union "+
+			//	"	select  message,class from postClassified1500to2000	 ";
+				"select  message,class from post300SotClassified where class!=10  ";
+			*/
+		
+		//int DATA_ID=10;
+		/*String QUERY_LEARN="SELECT message,class FROM  postclassified500vag union " +
+				" select  message,class from post500Testing where class!=10 union "+
+				"	select  message,class from postClassified1500to2000	  union "+
+				" select  message,class from post300SotClassified where class!=10 union "+
+				" select  message,class from FaF2kto30k11700classified where class!=10 union "+
+				"select   message,class from post300SotClassified where class=10";
+		
+		String QUERY_TEST="select  message,class from postclassified1000 ";*/
+		
+		
+		/*int DATA_ID=11;
+		String QUERY_LEARN="SELECT message,class FROM  postclassified500vag union " +
+				" select  message,class from post500Testing  union "+
+				"	select  message,class from  postclassified1000   union "+
+				" select  message,class from post300SotClassified   union "+
+				" select  message,class from FaF2kto30k11700classified where class!=10 union "+
+				"select   message,class from post300SotClassified ";
+		
+		String QUERY_TEST="select  message,class from  postClassified1500to2000	";
+		*/
+		
+		int DATA_ID=12;
+		String QUERY_LEARN="Select message,class from( " +
+						"Select * From TopIrrelevant union " +
+						"Select * From  TopSports union "+
+						"Select * From TopMusic union "+
+						"Select * From  TopPolitics union "+
+						"Select * From  TopNews  "+
+						") as All0 order by message Limit 500";
+		
+		
+
+		String QUERY_TEST="select  message,class from  postclassified1000	";
+		
+			
+		Boolean saveToDataBase =false;
+		 String comment="No Comment";
 			
 		 
-		String filterOptionsString="-R first-last -W 10000 " +
-                "-prune-rate -1.0 -T -I  -N 0 -stemmer " +
-                // "weka.core.stemmers.NullStemmer
-      "-M 1 " +
-                "-tokenizer \"weka.core.tokenizers.WordTokenizer \"" +
-                "-delimiters \" \\r\\n\\t.,;:\\\'\\\"()?!\"";
-		
+		String filterOptionsString="weka.filters.unsupervised.attribute.StringToWordVector -R first-last -W 1000 -prune-rate -1.0 -I -N 0 -stemmer weka.core.stemmers.NullStemmer -M 1 -tokenizer"+ 
+					" \"weka.core.tokenizers.WordTokenizer -delimiters  \\r\\n\\t.,;:\\\'\\\"()?!\"";
+		System.out.println("Filter Option String: "+filterOptionsString+"/n");
+				
 		 Instances data=null;
 		 InstanceQuery query=null;	
 //End Variables
 	 
+	 //Dialog Boxes
+		 JOptionPane optionPane= new JOptionPane(
+				   "SaveBuffer Test to Database?",
+				    JOptionPane.QUESTION_MESSAGE,
+				    JOptionPane.YES_NO_OPTION);
+		 int res=optionPane.showConfirmDialog(null, "Save the test to Database ?");
+	 if (res==0)
+	 {
+		 saveToDataBase=true;
+		 comment=optionPane.showInputDialog("Comments For the Test");
+	 }
 	 
-	
 	 
 	 
 		  query = new InstanceQuery();
@@ -123,21 +194,30 @@ public class WekaTraining {
 		
 		//Instances train = null;
 	//	train = sourceTrain.getDataSet();
-		Instances train=data;
-		if (train.classIndex() == -1)
-			train.setClassIndex(train.numAttributes() - 1);
-
-	
+		Instances trainPre=data;
+		
+	  NominalToString nmFilterString=new NominalToString();
+	  nmFilterString.setAttributeIndexes("1");
 		StringToWordVector filter = new StringToWordVector();
+	
 		filter.setOptions(
 			      weka.core.Utils.splitOptions(filterOptionsString));
+		
 //    -R first-last -W 100000 -prune-rate -1.0 -T -I -N 0 -L -stemmer weka.core.stemmers.NullStemmer -M 1 -tokenizer "weka.core.tokenizers.WordTokenizer -delimiters \" \\r\\n\\t.,;:\\\'\\\"()?!\""	
-	
+	//	String[] aList= filter.getOptions();
+		nmFilterString.setInputFormat(trainPre);
+		Instances train=Filter.useFilter(trainPre, nmFilterString);
+		
 		 filter.setInputFormat(train);  // initializing the filter once with training set
 		 Instances newTrain = Filter.useFilter(train, filter);  // configures the Filter based on train instances and returns filtered instances
 	/*	for (int i=0;i<10;i++){
 		 System.out.println(newTrain.get(i));
 		}*/
+
+			if (newTrain.classIndex() == -1){
+				newTrain.setClassIndex(0);
+			}
+			
 		 Classifier cModel=null;
 		 RegSMO reg=null;
 		 System.out.println(" Reporting \n");
@@ -204,7 +284,7 @@ public class WekaTraining {
 		 cModel.buildClassifier(newTrain);
 		 long elapsedTrainingTime = System.nanoTime() - start;
 		 
-	
+		 
 		//save models
 		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ClassifierName+".model"+DATA_ID+METHOD));
 		oos.writeObject(cModel);
@@ -222,7 +302,7 @@ public class WekaTraining {
 		 // Test the model
 		 Evaluation eTestTraining = new Evaluation(newTrain);
 		 eTestTraining.evaluateModel(cModel, newTrain);
-
+		 
 		 String strSummary = eTestTraining.toSummaryString();
 		 System.out.println(strSummary);
 		 
@@ -273,25 +353,41 @@ public class WekaTraining {
 		testquery.setQuery(QUERY_TEST);
 		 
 		  test = testquery.retrieveInstances();
+	
 		
-		if (test.classIndex() == -1) {
-			test.setClassIndex(test.numAttributes() - 1);
-		}
+	
+			
+			
+		
+//	    -R first-last -W 100000 -prune-rate -1.0 -T -I -N 0 -L -stemmer weka.core.stemmers.NullStemmer -M 1 -tokenizer "weka.core.tokenizers.WordTokenizer -delimiters \" \\r\\n\\t.,;:\\\'\\\"()?!\""	
+			nmFilterString.setInputFormat(test);
+			Instances newTest1Pre=Filter.useFilter(test, nmFilterString);
+			
+			
 
 		Filter filter2 = (Filter) weka.core.SerializationHelper.read(ClassifierName+"filter"+"Test"+DATA_ID+METHOD);
-		Instances newTest1 = Filter.useFilter(test, filter2); 
+		String[] aList= filter.getOptions();
+		Instances newTest1 = Filter.useFilter(newTest1Pre, filter2); 
 															
 		Classifier cModel1 = (Classifier) weka.core.SerializationHelper.read( ClassifierName+".model"+DATA_ID+METHOD);
 
+
+		if (newTest1.classIndex() == -1) {
+			newTest1.setClassIndex(0);
+		}
 		// Test the model
 		Evaluation eTestTesting = new Evaluation(newTest1);
 		eTestTesting.evaluateModel(cModel1, newTest1);
+		
+		Instance instances=newTest1.instance(1);
 		String strSummary2 = eTestTesting.toSummaryString();
 		System.out.println(strSummary2);
 
 		// Get the confusion matrix
 		double[][] cmMatrix2 = eTestTesting.confusionMatrix();
 
+		
+		
 		System.out.println("Eval instances: " + eTestTesting.numInstances());
 		int counter1 = 0;
 		double MeanClassificationTime=0;

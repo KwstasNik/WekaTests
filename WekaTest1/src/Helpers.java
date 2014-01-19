@@ -2,6 +2,8 @@ import java.awt.List;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
+
 import com.mysql.jdbc.Statement;
 
 import weka.classifiers.evaluation.Evaluation;
@@ -15,6 +17,20 @@ public  class Helpers {
 		
 	}
 	
+	
+	/*public static void createDialod(Boolean saveToDataBase,String comment) {
+		 JOptionPane optionPane= new JOptionPane(
+				   "SaveBuffer Test to Database?",
+				    JOptionPane.QUESTION_MESSAGE,
+				    JOptionPane.YES_NO_OPTION);
+		 int res=optionPane.showConfirmDialog(null, "Save the test to Database ?");
+	 if (res==0)
+	 {
+		 saveToDataBase=true;
+		 comment=optionPane.showInputDialog("Comments For the Test");
+	 }
+	}
+	*/
 	
 	public static ArrayList<String> createClassList(weka.classifiers.Evaluation eTest2) throws Exception
 	{//Class List Provides a mapping between class indexes
