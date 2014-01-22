@@ -29,10 +29,12 @@ public class Parser {
 	/**
 	 * @param args
 	 */
-	static String INPUT_PATH="C:\\Users\\Kwstas\\Desktop\\gritT\\topallin.arff";
-	static String OUPUT_PATH="C:\\Users\\Kwstas\\Desktop\\gritT\\topallinOut.arff";
+	//static String INPUT_PATH="C:\\Users\\Kwstas\\Desktop\\gritT\\topallin.arff";
+	//static String OUPUT_PATH="C:\\Users\\Kwstas\\Desktop\\gritT\\topallinOut.arff";
 	
-	public static void main(String[] args) {
+	static String INPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\thesis drafts\\post.sql_out.sql";
+	static String OUPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\thesis drafts\\post.sql_RepLinksGreek.sql";
+	/*public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
 		
@@ -42,14 +44,14 @@ public class Parser {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		*/
 		
 		
 		
 	
 		
 		
-	}
+	//}
 	public  static String getGreek(String input) throws Exception 
 	
 	{
@@ -113,7 +115,7 @@ public class Parser {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-		           
+					   System.out.println(c);
 		            line =replaced;
 		            
 		            writer.newLine();
@@ -129,12 +131,13 @@ public class Parser {
 		        c++;
 		        
 		        lines.add(line);
-		        System.out.println(c);
-		        System.out.println("------------finished-----------");
-		        System.out.println("Entries replaced="+replacement);
+		     
+		     
 		        
 		        line = in.readLine();
 		        }
+		    System.out.println("------------finished-----------");
+	        System.out.println("Entries replaced="+replacement);
 		        //this sequence[, '',] means the Line Has no data,
 		        //so it must be removed
 		       

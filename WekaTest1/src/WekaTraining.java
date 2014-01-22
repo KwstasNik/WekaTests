@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Timer;
 
 import javax.naming.InitialContext;
@@ -44,10 +45,10 @@ public class WekaTraining {
 	public static void main(String[] args) throws Exception {
 		//VARIABLES
 		int previousExpId=0;
-		
+		String DATASOURCE_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\topallinOut.arff";
 	//	String METHOD="NaiveBayesMultinomial" Cannot handle multi-valued nominal class;
-		String METHOD="SMO";
-	//	String METHOD="NaiveBayes";
+	//	String METHOD="SMO";
+		String METHOD="NaiveBayes";
 	//	String METHOD="J48";
 	//	String METHOD="LinearRegression" Cannot handle multi-valued nominal class;
 		
@@ -131,18 +132,21 @@ public class WekaTraining {
 		*/
 		
 		int DATA_ID=12;
-		String QUERY_LEARN="Select message,class from( " +
+	/*	String QUERY_LEARN="Select message,class from( " +
 						"Select * From TopIrrelevant union " +
 						"Select * From  TopSports union "+
 						"Select * From TopMusic union "+
 						"Select * From  TopPolitics union "+
 						"Select * From  TopNews  "+
-						") as All0 order by message Limit 500";
+						") as All0 order by message Limit 500";*/
+		
+	//	String QUERY_TEST="select  message,class from  postclassified1000	";
 		
 		
+		QueryHelper qHelper=new QueryHelper();
+		String QUERY_LEARN=qHelper.getQuerywithDataId(DATA_ID)[0];
+		String QUERY_TEST=qHelper.getQuerywithDataId(DATA_ID)[1];
 
-		String QUERY_TEST="select  message,class from  postclassified1000	";
-		
 			
 		Boolean saveToDataBase =false;
 		 String comment="No Comment";
@@ -169,35 +173,42 @@ public class WekaTraining {
 	 }
 	 
 	 
-	 
+	 JOptionPane optionPane2= new JOptionPane(
+			   "Load From DataBase?",
+			    JOptionPane.QUESTION_MESSAGE,
+			    JOptionPane.YES_NO_OPTION);
+	  res=optionPane2.showConfirmDialog(null, "Load From DataBase ?");
+	 if (res==0)
+	 {
 		  query = new InstanceQuery();
-		 query.setUsername("root");
-		 query.setPassword("");
+			 query.setUsername("root");
+			 query.setPassword("");
+			 query.setQuery(QUERY_LEARN);
+			  data = query.retrieveInstances();
 		 
-		// query.setQuery("SELECT message,class FROM  postclassified1000 WHERE class !=  ''");
-		 
-		 query.setQuery(QUERY_LEARN);
+	 }
+	 else
+	 {
 			
-		 // You can declare that your data set is sparse
-		 // query.setSparseData(true);
-		  data = query.retrieveInstances();
-		//System.out.println("Instance"+data.toString());
-			
+			DataSource sourceTrain = new DataSource(DATASOURCE_PATH);
+				 data = sourceTrain.getDataSet();
+				 
+	 }
 		
-	
-		 
-		
-		
+
 		String ClassifierName=METHOD;
+	
 		
-	//DataSource sourceTrain = new DataSource("trainingSet.arff");
 		
-		//Instances train = null;
-	//	train = sourceTrain.getDataSet();
+		
+		
 		Instances trainPre=data;
 		
+		//Nominal To String Filter
 	  NominalToString nmFilterString=new NominalToString();
 	  nmFilterString.setAttributeIndexes("1");
+	  
+	  
 		StringToWordVector filter = new StringToWordVector();
 	
 		filter.setOptions(
@@ -205,11 +216,11 @@ public class WekaTraining {
 		
 //    -R first-last -W 100000 -prune-rate -1.0 -T -I -N 0 -L -stemmer weka.core.stemmers.NullStemmer -M 1 -tokenizer "weka.core.tokenizers.WordTokenizer -delimiters \" \\r\\n\\t.,;:\\\'\\\"()?!\""	
 	//	String[] aList= filter.getOptions();
-		nmFilterString.setInputFormat(trainPre);
-		Instances train=Filter.useFilter(trainPre, nmFilterString);
+		//nmFilterString.setInputFormat(trainPre);
+		//Instances train=Filter.useFilter(trainPre, nmFilterString);
 		
-		 filter.setInputFormat(train);  // initializing the filter once with training set
-		 Instances newTrain = Filter.useFilter(train, filter);  // configures the Filter based on train instances and returns filtered instances
+		 filter.setInputFormat(trainPre);  // initializing the filter once with training set
+		 Instances newTrain = Filter.useFilter(trainPre, filter);  // configures the Filter based on train instances and returns filtered instances
 	/*	for (int i=0;i<10;i++){
 		 System.out.println(newTrain.get(i));
 		}*/
@@ -301,15 +312,15 @@ public class WekaTraining {
 		System.out.println("-----------------------------------\nclassifier" +ClassifierName);
 		 // Test the model
 		 Evaluation eTestTraining = new Evaluation(newTrain);
-		 eTestTraining.evaluateModel(cModel, newTrain);
-		 
+		// eTestTraining.evaluateModel(cModel, newTrain);
+		 eTestTraining.crossValidateModel(cModel, newTrain, 10, new Random(1));
 		 String strSummary = eTestTraining.toSummaryString();
 		 System.out.println(strSummary);
 		 
 		 // Get the confusion matrix
 		 double[][] cmMatrix = eTestTraining.confusionMatrix();
 		 
-		 System.out.println("Eval instances: " + eTestTraining.numInstances());
+		/* System.out.println("Eval instances: " + eTestTraining.numInstances());
 			int counter = 0;
 			for (int i = 0; i < eTestTraining.numInstances(); i++) {
 				double pred = cModel.classifyInstance(newTrain.instance(i));
@@ -317,10 +328,10 @@ public class WekaTraining {
 				} else {
 					counter++;
 				}
-			}
+			}*/
 			
 		
-			System.out.println("different values " + counter);
+		/*	System.out.println("different values " + counter);
 			try {
 				System.out.println( eTestTraining.toClassDetailsString());
 				System.out.println(eTestTraining.toMatrixString());
@@ -330,7 +341,7 @@ public class WekaTraining {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			
-			}
+			}*/
 			 
 
 			 
@@ -339,8 +350,8 @@ public class WekaTraining {
 			 
 				 
 /////////////////////////////////////////////////////////////////////////////////////////////
-		// test NB with test set
-		System.out.println("classifier "+ClassifierName+" test set");
+		// test NB with test set Old Code
+		/*System.out.println("classifier "+ClassifierName+" test set");
 	
 		//DataSource source1 = new DataSource("testSet.arff");
 	
@@ -368,31 +379,38 @@ public class WekaTraining {
 		Filter filter2 = (Filter) weka.core.SerializationHelper.read(ClassifierName+"filter"+"Test"+DATA_ID+METHOD);
 		String[] aList= filter.getOptions();
 		Instances newTest1 = Filter.useFilter(newTest1Pre, filter2); 
-															
-		Classifier cModel1 = (Classifier) weka.core.SerializationHelper.read( ClassifierName+".model"+DATA_ID+METHOD);
-
+	
 
 		if (newTest1.classIndex() == -1) {
 			newTest1.setClassIndex(0);
-		}
+		}*/
+		////////////////////////////////////////////////
 		// Test the model
-		Evaluation eTestTesting = new Evaluation(newTest1);
-		eTestTesting.evaluateModel(cModel1, newTest1);
+	//	Evaluation eTestTesting = new Evaluation(newTest1);
+		//eTestTesting.evaluateModel(cModel1, newTest1);
 		
-		Instance instances=newTest1.instance(1);
+			
+Classifier cModel1 = (Classifier) weka.core.SerializationHelper.read( ClassifierName+".model"+DATA_ID+METHOD);
+
+		Evaluation eTestTesting = new Evaluation(newTrain);
+		eTestTesting.crossValidateModel(cModel, newTrain, 10, new Random(1));
+			//eTestTesting.evaluateModel(cModel1, newTrain);
+			
+	
 		String strSummary2 = eTestTesting.toSummaryString();
 		System.out.println(strSummary2);
 
 		// Get the confusion matrix
 		double[][] cmMatrix2 = eTestTesting.confusionMatrix();
 
-		
+	
 		
 		System.out.println("Eval instances: " + eTestTesting.numInstances());
 		int counter1 = 0;
 		double MeanClassificationTime=0;
 		int ClassificationTime=0;
-		for (int i = 0; i < eTestTesting.numInstances(); i++) {
+		//old testing
+	/*	for (int i = 0; i < eTestTesting.numInstances(); i++) {
 			
 			 start = System.nanoTime();  
 			double pred = cModel1.classifyInstance(newTest1.instance(i));
@@ -402,7 +420,7 @@ public class WekaTraining {
 			} else {
 				counter1++;
 			}
-		}
+		}*/
 		MeanClassificationTime=(ClassificationTime/ eTestTesting.numInstances());
 		
 		
