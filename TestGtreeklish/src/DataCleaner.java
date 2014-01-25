@@ -30,8 +30,8 @@ public class DataCleaner {
 	/**
 	 * @param args
 	 */
-	static String INPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\thesis drafts\\post500Vagelis.sql";
-	static String OUPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\thesis drafts\\post500VagelisGreekClean.sql";
+	static String INPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\thesis drafts\\allin.sql";
+	static String OUPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\thesis drafts\\allinGreekClean.sql";
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
@@ -41,14 +41,19 @@ public class DataCleaner {
 		
 		//String regex = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
 	
-		
+	for (int i=0;i<2;i++){	
+		if(i==1)
+		{
+			 INPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\thesis drafts\\post.sql_out.sql";
+			 OUPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\thesis drafts\\post.sql_outGreekClean.sql";
+		}
 		try {
 			readLargerTextFile();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+	}
 	}
 
 	
@@ -79,16 +84,16 @@ public class DataCleaner {
 		     if (line.contains(", '")){
 		    	 TempLine tmpLine=new TempLine();
 		    	 
-		   	 int mesgStart= line.indexOf(", '", line.indexOf(", '")+3)+3;
+		   	 int mesgStart= line.indexOf("', '", line.indexOf("', '")+4)+4;
 		   	 
 		   	tmpLine.setPrev(line.substring(0, mesgStart));
-		   	 
-			 int mesgStop= line.indexOf("',", line.indexOf("',", line.indexOf("',")+2)+2);
+		  
+			 int mesgStop= line.indexOf("', '", mesgStart);
 		  	 
 			   	tmpLine.setNext(line.substring(mesgStop));
 			
 			 StrLst.add(tmpLine);
-			 
+			// System.out.println(line);
 			 String original=line.substring(mesgStart, mesgStop).toString();
 			
 			 String cleanStringreek=null;
@@ -151,7 +156,7 @@ public class DataCleaner {
 		    FileOutputStream fout = new FileOutputStream( new File( OUPUT_PATH ) );
 		    PrintWriter out = new PrintWriter(new OutputStreamWriter(fout, "UTF-8"));
 		    for (TempLine l : totalStrLst){
-		        out.println(l.getPrev()+" "+l.getReplace()+l.getNext());}
+		        out.println(l.getPrev()+l.getReplace()+l.getNext());}
 		    out.close();
 		    
 		    
@@ -230,8 +235,8 @@ private static String clearSpecial(String string) {
     	if(string.contains("à")){ string = string.replace("à", "õ"); }
     	
     	
-    	
-    	return string;
+   
+    	return string.toLowerCase();
 	}
 	
 

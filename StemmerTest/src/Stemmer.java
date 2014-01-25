@@ -36,8 +36,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.lucene.analysis.el.GreekStemmer;
 public class Stemmer {
-	static String INPUT_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\topallinOut.arff";
-	static String OUPUT_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\topallinOutStemmed.arff";
+	static String INPUT_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\training200.arff";
+	static String OUPUT_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\training200Stemmed.arff";
 	/**
 	 * 
 	 * @param args
