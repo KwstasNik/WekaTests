@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import org.apache.lucene.analysis.el.GreekAnalyzer;
 import org.apache.lucene.analysis.el.GreekStemmer;
 import org.tartarus.snowball.ext.PorterStemmer;
 
@@ -35,6 +36,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.lucene.analysis.el.GreekStemmer;
+import org.apache.lucene.analysis.util.CharArraySet;
 public class Stemmer {
 	static String INPUT_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\training200.arff";
 	static String OUPUT_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\training200Stemmed.arff";
@@ -75,7 +77,7 @@ public class Stemmer {
 	    	  String currentString=scanner.next();
 	    	  char[] token=currentString.toCharArray();
 	  		int l = stemmer.stem(token, token.length);
-	  	
+       CharArraySet hString= GreekAnalyzer.getDefaultStopSet();
 	  	   String   stem = new String(token, 0, l);
 	  	   
 	  	 line=line.replace(currentString, stem);

@@ -67,6 +67,7 @@ public class Parser {
 	} catch (SOAPException e1) {
 		// TODO Auto-generated catch block
 		e1.printStackTrace();
+		
 	}
 		soap.setHeader(header);
 		
@@ -79,6 +80,19 @@ public class Parser {
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.println("retry!");
+			try {
+				out = proxy.greeklishToGreek(input);
+				//System.out.println(out);
+				
+				
+			} catch (RemoteException ex) {
+				// TODO Auto-generated catch block
+				ex.printStackTrace();
+							
+				
+			}
+			
 		}
 		
 	 return out;

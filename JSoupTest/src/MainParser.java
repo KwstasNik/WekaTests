@@ -27,8 +27,9 @@ public class MainParser {
 	/**
 	 * @param args
 	 */
-	static String INPUT_PATH="C:\\Users\\Kwstas\\Desktop\\gritzal\\post.sql.txt";
-	static String OUPUT_PATH="C:\\Users\\Kwstas\\Desktop\\gritzal\\post.sql_out.sql.txt";
+	
+	static String INPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\gritzal\\PostExtra20k_40k.sql";
+	static String OUPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\gritzal\\PostExtra20k_40kJsp.sql";
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 

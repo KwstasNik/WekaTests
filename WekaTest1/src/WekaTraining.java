@@ -45,10 +45,10 @@ public class WekaTraining {
 	public static void main(String[] args) throws Exception {
 		//VARIABLES
 		int previousExpId=0;
-		String DATASOURCE_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\topallinOut.arff";
+		String DATASOURCE_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\training3366.arff";
 	//	String METHOD="NaiveBayesMultinomial" Cannot handle multi-valued nominal class;
-	//	String METHOD="SMO";
-		String METHOD="NaiveBayes";
+		String METHOD="SMO";
+	//	String METHOD="NaiveBayes";
 	//	String METHOD="J48";
 	//	String METHOD="LinearRegression" Cannot handle multi-valued nominal class;
 		
@@ -154,6 +154,7 @@ public class WekaTraining {
 		 
 		String filterOptionsString="weka.filters.unsupervised.attribute.StringToWordVector -R first-last -W 1000 -prune-rate -1.0 -I -N 0 -stemmer weka.core.stemmers.NullStemmer -M 1 -tokenizer"+ 
 					" \"weka.core.tokenizers.WordTokenizer -delimiters  \\r\\n\\t.,;:\\\'\\\"()?!\"";
+		
 		System.out.println("Filter Option String: "+filterOptionsString+"/n");
 				
 		 Instances data=null;
@@ -204,16 +205,16 @@ public class WekaTraining {
 		
 		Instances trainPre=data;
 		
-		//Nominal To String Filter
-	  NominalToString nmFilterString=new NominalToString();
-	  nmFilterString.setAttributeIndexes("1");
+	
 	  
 	  
 		StringToWordVector filter = new StringToWordVector();
-	
 		filter.setOptions(
-			      weka.core.Utils.splitOptions(filterOptionsString));
-		
+			      weka.core.Utils.splitOptions("-R first-last -W 100000 " +
+			                                "-prune-rate -1.0 -T -I -N 0 -stemmer " +
+			                                           "weka.core.stemmers.NullStemmer -M 1 " +
+			                                          "-tokenizer \"weka.core.tokenizers.WordTokenizer \"" +
+			                                          "-delimiters \" \\r\\n\\t.,;:\\\'\\\"()?!\""));		
 //    -R first-last -W 100000 -prune-rate -1.0 -T -I -N 0 -L -stemmer weka.core.stemmers.NullStemmer -M 1 -tokenizer "weka.core.tokenizers.WordTokenizer -delimiters \" \\r\\n\\t.,;:\\\'\\\"()?!\""	
 	//	String[] aList= filter.getOptions();
 		//nmFilterString.setInputFormat(trainPre);

@@ -23,6 +23,12 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.axis.Version;
+import org.apache.lucene.analysis.el.GreekAnalyzer;
+import org.apache.lucene.analysis.util.CharArraySet;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 
 
 public class DataCleaner {
@@ -30,8 +36,14 @@ public class DataCleaner {
 	/**
 	 * @param args
 	 */
-	static String INPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\thesis drafts\\allin.sql";
-	static String OUPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\thesis drafts\\allinGreekClean.sql";
+	// static String INPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\gritzal\\postExtra80k_120k.sql";
+	static String INPUT_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\training33456.arff";
+	
+//	static String OUPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\gritzal\\postExtra80k_120kClean.sql";
+	static String OUPUT_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\training33456Clean.arff";
+	
+	static String splitSeqString="}+";
+	public static String documentType="ARFF";
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
@@ -41,19 +53,19 @@ public class DataCleaner {
 		
 		//String regex = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
 	
-	for (int i=0;i<2;i++){	
+	/*for (int i=0;i<2;i++){	
 		if(i==1)
 		{
 			 INPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\thesis drafts\\post.sql_out.sql";
 			 OUPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\thesis drafts\\post.sql_outGreekClean.sql";
-		}
+		}*/
 		try {
 			readLargerTextFile();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	//}
 	}
 
 	
@@ -76,33 +88,44 @@ public class DataCleaner {
 		    StringBuffer packedString=new StringBuffer();
 		    ArrayList<TempLine> totalStrLst=new ArrayList<TempLine>();
 		    ArrayList<TempLine> StrLst=new ArrayList<TempLine>();
-		    String[] newStrLstList=new String[1000];
+		    ArrayList<String> newStrLstList=new ArrayList<String>();
+		 	DocumentHepler documentHepler=new DocumentHepler(documentType);
 			String nextLine;
+			  
 		    while (line != null  ) {
 		    
 		    	nextLine = in.readLine();
-		     if (line.contains(", '")){
+		    	
+		    	//phase1
+		     	
+		    	
+		     if (documentHepler.isProperLine(line)){
 		    	 TempLine tmpLine=new TempLine();
 		    	 
-		   	 int mesgStart= line.indexOf("', '", line.indexOf("', '")+4)+4;
-		   	 
+		    	int mesgStart=documentHepler.getPrevIndex(line);
+		    	int  mesgStop=documentHepler.getNextIndex(line);
 		   	tmpLine.setPrev(line.substring(0, mesgStart));
 		  
-			 int mesgStop= line.indexOf("', '", mesgStart);
-		  	 
+		 	 
 			   	tmpLine.setNext(line.substring(mesgStop));
 			
-			 StrLst.add(tmpLine);
 			// System.out.println(line);
 			 String original=line.substring(mesgStart, mesgStop).toString();
-			
-			 String cleanStringreek=null;
+		     
+		     original=replaceUriWithTitle(original,writer,c);
+			  
+		     
 			 
-			 if(packedString.length()<4000&&nextLine!=null)
+			 StrLst.add(tmpLine);
+				
+		     
+		     String cleanStringreek=null;
+			 
+			 if(packedString.length()<4500&&nextLine!=null)
 			 {
-			
+				
 				 packedString.append(original);
-				 packedString.append("  split line  < ");
+				 packedString.append(splitSeqString);
 			 }
 			 else{
 				 if (nextLine==null)
@@ -118,19 +141,38 @@ public class DataCleaner {
 		        		String inString=packedString.toString();
 		        				inString=inString.replaceAll("(.)\\1+", "$1");
 		        				inString=clearSpecial(inString);
+		        				//inString="kalimera";
+		        				
 						String greekOriginal = Parser.getGreek(inString);
 						packedString=new StringBuffer();
 							  cleanStringreek=clearSpecial(greekOriginal);
+							  cleanStringreek=cleanStopWords(cleanStringreek);
+							  cleanStringreek=cleanNumbers(cleanStringreek);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-		        	newStrLstList=cleanStringreek.split("split line <");
+		        	newStrLstList=SplitString(cleanStringreek);
 		        int i=0;
 		        	for (TempLine orgString : StrLst) {
-						
-		        		orgString.setReplace(newStrLstList[i]);
-		           
+		        		
+						/*if(c==4582)
+						{
+						int sz=	StrLst.size();
+							int y=0;
+							y++;
+						}*/
+					
+							try{
+								if(i<newStrLstList.size()){
+		        		orgString.setReplace(newStrLstList.get(i));
+								}
+						}
+						catch(Exception e)
+						{
+							
+							e.printStackTrace();
+						}
 		           i++;
 		        	}
 		        	totalStrLst.addAll(StrLst);
@@ -156,7 +198,19 @@ public class DataCleaner {
 		    FileOutputStream fout = new FileOutputStream( new File( OUPUT_PATH ) );
 		    PrintWriter out = new PrintWriter(new OutputStreamWriter(fout, "UTF-8"));
 		    for (TempLine l : totalStrLst){
-		        out.println(l.getPrev()+l.getReplace()+l.getNext());}
+		    String replString=l.getReplace();
+		    if (replString!=null)
+		    {
+			if(replString.contains("}")){ replString = replString.replace("}", " "); }
+    		if(replString.contains("+")){ replString = replString.replace("+", " "); }
+		    	if(!replString.trim().isEmpty()){
+		    		
+		    	
+		        out.println(l.getPrev()+replString+l.getNext());
+		    	}
+		    }
+		    	}
+		    
 		    out.close();
 		    
 		    
@@ -164,6 +218,75 @@ public class DataCleaner {
 		    writer.write("process Duration in nanosecs:"+elapsedTime);
 		    writer.close();
 			
+	  }
+	
+	  public static String replaceUri(String uri,BufferedWriter writer,int counter) throws IOException
+	  {
+			Document doc= null;
+		// doc=	new Document("C:\\Users\\Kwstas\\Desktop\\gritzal\\comment.sql.txt");
+	if(!uri.contains("http"))
+	{
+		uri="http://"+uri;
+	}
+	try {
+		doc = Jsoup.connect(uri).get();
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		//e.printStackTrace();
+		writer.write(counter+". "+"failure for  "+uri);
+	}
+	String title="";
+	if (doc!=null){
+		title= doc.title();
+	}
+	return title;
+	  }
+	 
+	  
+	  
+	  public static ArrayList<String> SplitString( String input) {
+		  
+		  ArrayList<String> entryList=new ArrayList<String>();
+		int splitIndex=  input.indexOf(splitSeqString);
+		while (splitIndex!=-1){
+			
+			entryList.add(input.substring(0,splitIndex));
+			input=input.substring(splitIndex+splitSeqString.length());
+		 splitIndex=  input.indexOf(splitSeqString);
+		 
+		 }
+		entryList.add(input);
+		return entryList;
+		  
+	}
+	  
+	
+	  public static String replaceUriWithTitle(String line,BufferedWriter writer,int c) throws IOException
+	  {
+		  if (line.contains("http")) {
+		    	//if(IsMatch(line, regexpattern)){
+		        	 c++;
+		      //      String sValue = line.substring(line.indexOf("http"),line.indexOf("'", line.indexOf("http")));
+		          ArrayList<String> links=  returnLinks(line);
+		            for (String sValue : links) {
+						
+		            	if(!sValue.contains("http"))
+		            	{
+		            		sValue="http://"+sValue;
+		            	}
+		            String replacedUri=replaceUri(sValue,writer,c);
+		            try{
+		            line =line.replace(sValue,replacedUri);
+		            }
+		            catch(Exception E)     
+		            {
+		            	writer.write(c+".REPLACE ERROR "+sValue+"--->"+replacedUri);
+		            }
+		            writer.write(c+". "+sValue+"--->"+replacedUri);
+		            writer.newLine();
+		            }
+		        }
+		  return line;
 	  }
 	  
 	 
@@ -199,8 +322,8 @@ private static String clearSpecial(String string) {
     	if(string.contains("*")){ string = string.replace("*", " "); }
     	if(string.contains("$")){ string = string.replace("$", " "); }
     	if(string.contains("^")){ string = string.replace("^", " "); }
-    	if(string.contains("+")){ string = string.replace("+", " "); }
-    	if(string.contains("-")){ string = string.replace(" - ", " "); }
+    
+    	if(string.contains("-")){ string = string.replace("-", " "); }
     	if(string.contains("=")){ string = string.replace("=", " "); }
     	if(string.contains("%")){ string = string.replace("%", " "); }
     	if(string.contains("#")){ string = string.replace("#", " "); }
@@ -208,20 +331,22 @@ private static String clearSpecial(String string) {
     	//if(string.contains("(")){ string = string.replace("(", " ("); }
     	//if(string.contains(")")){ string = string.replace(")", ") "); }
     	if(string.contains("[")){ string = string.replace("[", " "); }
-    	if(string.contains("]")){ string = string.replace("]", " "); }
+    	//if(string.contains("]")){ string = string.replace("]", " "); }
     	if(string.contains("\"")){ string = string.replace("\"", " "); }
     	if(string.contains("\\ç")){ string = string.replace("\\ç", " "); }
     	if(string.contains("\\ô")){ string = string.replace("\\ô", " "); }
     	if(string.contains(";")){ string = string.replace(";", " "); }
     	if(string.contains("?")){ string = string.replace("?", " "); }
-    	//if(string.contains("<")){ string = string.replace("<", " "); }
+    	if(string.contains("<")){ string = string.replace("<", " "); }
     	if(string.contains(">")){ string = string.replace(">", " "); }
     	if(string.contains(",")){ string = string.replace(",", " "); }
     	if(string.contains("´")){ string = string.replace("´", " "); }
-    	//if(string.contains(":")){ string = string.replace(":", " "); }
     	if(string.contains("«")){ string = string.replace("«", " "); }
     	if(string.contains("»")){ string = string.replace("»", " "); }
-    	
+    	if(string.contains("?")){ string = string.replace("?", " "); }
+    	if(string.contains(":")){ string = string.replace(":", " "); }
+    	if(string.contains("ò")){ string = string.replace("ò", "ó"); }
+        
     	if(string.contains("Ü")){ string = string.replace("Ü", "á"); }
     	if(string.contains("Ý")){ string = string.replace("Ý", "å"); }
     	if(string.contains("ü")){ string = string.replace("ü", "ï"); }
@@ -234,13 +359,54 @@ private static String clearSpecial(String string) {
     	if(string.contains("û")){ string = string.replace("û", "õ"); }
     	if(string.contains("à")){ string = string.replace("à", "õ"); }
     	
+    	if(string.contains("”")){ string = string.replace("”", " "); }
+    	if(string.contains("“")){ string = string.replace("“", " "); }
+    	if(string.contains("…")){ string = string.replace("…", " "); }
+        
+    	
+    
     	
    
     	return string.toLowerCase();
 	}
 	
 
+private static String cleanStopWords(String string)
+{GreekAnalyzer da=new GreekAnalyzer(null);
+ CharArraySet stopSet= GreekAnalyzer.getDefaultStopSet();
+ 
+ for (Object stopwrd : stopSet) {
+	String stoW=new String(((char[])stopwrd));
+	 stoW=" "+stoW+" ";
+		if(string.contains(stoW))
+		{ 
+			string = string.replace(stoW," ");
+			}
+	    
+	 
+}
+ 
+	return string;
+}
 
+
+private static String cleanNumbers (String string)
+{
+	  
+	if(string.contains("0")){ string = string.replace("0", " "); }
+	if(string.contains("1")){ string = string.replace("1", " "); }
+	if(string.contains("2")){ string = string.replace("2", " "); }
+	if(string.contains("3")){ string = string.replace("3", " "); }
+	if(string.contains("4")){ string = string.replace("4", " "); }
+	if(string.contains("5")){ string = string.replace("5", " "); }
+	if(string.contains("6")){ string = string.replace("6", " "); }
+	if(string.contains("7")){ string = string.replace("7", " "); }
+	if(string.contains("8")){ string = string.replace("8", " "); }
+	if(string.contains("9")){ string = string.replace("9", " "); }
+	
+	
+	return string;
+}
 
 }
 

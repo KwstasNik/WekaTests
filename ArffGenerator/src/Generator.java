@@ -64,13 +64,13 @@ public class Generator {
 		  for (int l=0;l<messageEntryListPackEntries.size();l++){
 			  
 			  List<messageEntry> currnetEntryList=messageEntryListPackEntries.get(l);
-			  int numOfEntr=Config.NUMBER;
-			  if (Config.NUMBER>currnetEntryList.size())
+			  int numOfEntr=Config.CLASSES_SIZE[l];
+			  if (Config.CLASSES_SIZE[l]>currnetEntryList.size())
 			{
 				   numOfEntr=currnetEntryList.size();
 			}
 			
-		  for(int i = 0; i < numOfEntr/*intGreekList.size()*/; i++ ){
+		  for(int i= 0; i < numOfEntr/*intGreekList.size()*/; i++ ){
 			  
 			  int position=ran.nextInt(10000);
 			  //find an empty position
@@ -123,7 +123,7 @@ public class Generator {
 			con = DriverManager.getConnection(Config.URL, Config.USER, Config.PASSWORD);
 			st = con.createStatement();
 			//return random
-			String query = Config.QUERY_STRING+Config.CLASSES[c]+" order by RAND() limit "+ Config.NUMBER;
+			String query = Config.QUERY_STRING+Config.CLASSES[c]+" order by RAND() limit "+Config.CLASSES_SIZE[c];
 			System.out.println(query);
 			rs = st.executeQuery(query);
 			
@@ -134,7 +134,7 @@ public class Generator {
 			  while ( rs.next() ) {
 				  //System.out.println(rs.getString("username") + "," + rs.getString("content"));
 				  messageEntry messageEntry=new messageEntry();
-				  messageEntry.setMes_class(rs.getString("message").replace("\n", " "));
+				  messageEntry.setMes_class(rs.getString("message").replaceAll("\n", " "));
 				  messageEntry.setMessage(rs.getString("class"));
 				 messageEntryList.add(messageEntry);
 			  }
