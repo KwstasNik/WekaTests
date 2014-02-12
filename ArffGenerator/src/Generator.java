@@ -24,9 +24,10 @@ public class Generator {
 	//static List<String> greek = new ArrayList<String>();
 	//static List<String> greeklish = new ArrayList<String>();
 	static List<List<messageEntry> > messageEntryListPackEntries=new   ArrayList<List<messageEntry> >();
-	static messageEntry RandomArray []=new  messageEntry[10000];
+	static messageEntry RandomArray []=new  messageEntry[20000];
 	static int training = 0;
 	static int total = 0;
+	static Config configur;
 	/**
 	 * @param args
 	 */
@@ -44,9 +45,18 @@ public class Generator {
 				    JOptionPane.QUESTION_MESSAGE,
 				    JOptionPane.YES_NO_OPTION);
 		String name=optionPane.showInputDialog("Save to File");
+		
+		 JOptionPane optionPane2= new JOptionPane(
+				   "Create Test arff?",
+				    JOptionPane.QUESTION_MESSAGE,
+				    JOptionPane.YES_NO_OPTION);
+		int split=optionPane2.showConfirmDialog(optionPane2,  "Create Test arff?");
 		 
 		 final String file1 = "C:\\Users\\Kwstas\\Desktop\\wekaTest\\" +name+
 		 		".arff";
+		 final String file1test = "C:\\Users\\Kwstas\\Desktop\\wekaTest\\" +name+"Test"+
+			 		".arff";
+		
 		//create training arff files
 		  // Create file 
 		  //FileWriter fstream1;
@@ -64,18 +74,18 @@ public class Generator {
 		  for (int l=0;l<messageEntryListPackEntries.size();l++){
 			  
 			  List<messageEntry> currnetEntryList=messageEntryListPackEntries.get(l);
-			  int numOfEntr=Config.CLASSES_SIZE[l];
-			  if (Config.CLASSES_SIZE[l]>currnetEntryList.size())
+			  int numOfEntr=configur.getConfiguration().get(l).getEntriesCount();
+			  if (numOfEntr>currnetEntryList.size())
 			{
 				   numOfEntr=currnetEntryList.size();
 			}
 			
 		  for(int i= 0; i < numOfEntr/*intGreekList.size()*/; i++ ){
 			  
-			  int position=ran.nextInt(10000);
+			  int position=ran.nextInt(20000);
 			  //find an empty position
 			  while(RandomArray[position]!=null){
-				  position=ran.nextInt(10000);
+				  position=ran.nextInt(20000);
 			  }
 			  
 			  
@@ -84,14 +94,46 @@ public class Generator {
 		  }
 		  }
 		  
-		  
-		  for (int i=0;i<RandomArray.length;i++){
+		  ArrayList<messageEntry> compactRandomArrayList=new ArrayList<messageEntry>();
+		  for (int  i=0 ;i<RandomArray.length ; i++) {
 			  if (RandomArray[i]!=null){
-		  temp =RandomArray[i].getMessage();
-		  temp = temp.replace("\n", " ");
-		  out1.write("'" + RandomArray[i].getMes_class() + "'" + "," + "'" + temp + "'" + "," + "\n"); 
+				  compactRandomArrayList.add(RandomArray[i]);
+				  
 			  }
+		}
+		  
+		  if(split!=0){
+			  //we don't want testingset
+		  for (int i=0;i<compactRandomArrayList.size();i++){
+			 
+		  temp =compactRandomArrayList.get(i).getMessage();
+		  temp = temp.replace("\n", " ");
+		  out1.write("'" + compactRandomArrayList.get(i).getMes_class() + "'" + "," + "'" + temp + "'" + "," + "\n"); 
+			  }
+		  
 		  }
+		  else {
+			  int limit=compactRandomArrayList.size()/3;
+				  for (int i=limit+1;i<compactRandomArrayList.size();i++){
+				
+			  temp =compactRandomArrayList.get(i).getMessage();
+			  temp = temp.replace("\n", " ");
+			  out1.write("'" + compactRandomArrayList.get(i).getMes_class() + "'" + "," + "'" + temp + "'" + "," + "\n"); 
+				  
+			  }
+				 Writer writerTst = new OutputStreamWriter(new FileOutputStream(file1test), "UTF-8");	
+				 BufferedWriter out2 = new BufferedWriter(writerTst);		 		 
+				  for (int i=0;i<limit+1;i++){
+						
+			
+			  temp =compactRandomArrayList.get(i).getMessage();
+			  temp = temp.replace("\n", " ");
+			  out2.write("'" + compactRandomArrayList.get(i).getMes_class() + "'" + "," + "'" + temp + "'" + "," + "\n"); 
+			  
+				 
+			  }
+			  out2.close();
+		}
 		  out1.close();
 		  
 		} catch (IOException e) {
@@ -116,21 +158,25 @@ public class Generator {
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
-			for (int c=0;c<Config.CLASSES.length;c++){
+		 configur=new Config();
+			for (int c=0;c<configur.getConfiguration().size();c++){
 		List<messageEntry> messageEntryList = new ArrayList<messageEntry>();
 			
 		try {
-			con = DriverManager.getConnection(Config.URL, Config.USER, Config.PASSWORD);
+			con = DriverManager.getConnection(configur.URL, configur.USER, configur.PASSWORD);
 			st = con.createStatement();
 			//return random
-			String query = Config.QUERY_STRING+Config.CLASSES[c]+" order by RAND() limit "+Config.CLASSES_SIZE[c];
+			String query = configur.QUERY_STRING+configur.getConfiguration().get(c).getClassDescription()+" and" +
+					" LENGTH(message) - LENGTH(REPLACE(message, ' ', ''))+1<" +configur.getConfiguration().get(c).getMaxwordcount()+" and " +
+					" LENGTH(message) - LENGTH(REPLACE(message, ' ', ''))+1>" +configur.getConfiguration().get(c).getMinwordCount()+
+					" order by  RAND() limit "+configur.getConfiguration().get(c).getEntriesCount();
 			System.out.println(query);
 			rs = st.executeQuery(query);
 			
 		}catch (Exception e) {e.printStackTrace(); System.out.println("Failed execute select content query");}
 		
 		try{
-			 System.out.println("processing comments for "+Config.CLASSES[c]);
+			 System.out.println("processing comments for "+configur.getConfiguration().get(c).getClassDescription());
 			  while ( rs.next() ) {
 				  //System.out.println(rs.getString("username") + "," + rs.getString("content"));
 				  messageEntry messageEntry=new messageEntry();
