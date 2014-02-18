@@ -11,7 +11,7 @@ public class Config {
 	//public static final int[] CLASSES_SIZE=new int[]{310,310,450,450};
 	private  ArrayList<ClassConfig> Configuration;
 	
-	public static final String QUERY_STRING= "Select class,message from allingreekcleanV2 where class= ";
+	public static final String QUERY_STRING= "Select class,message from allingreekcleanV3 where class= ";
 	
 	
 	//public static final int NUMBER = 300;
@@ -28,23 +28,23 @@ public class Config {
 		
 		ClassConfig config1=new ClassConfig();
 		config1.setClassDescription("1");
-		config1.setEntriesCount(310);
+		config1.setEntriesCount(300);
 		config1.setMaxwordcount(50);
 		config1.setMinwordCount(0);
 		Configuration.add(config1);
 		
 		ClassConfig config2=new ClassConfig();
 		config2.setClassDescription("2");
-		config2.setEntriesCount(450);
-		config2.setMaxwordcount(50);
-		config2.setMinwordCount(0);
+		config2.setEntriesCount(1000);
+		config2.setMaxwordcount(200);
+		config2.setMinwordCount(5);
 		Configuration.add(config2);
 		
 		ClassConfig config10=new ClassConfig();
 		config10.setClassDescription("10");
-		config10.setEntriesCount(450);
-		config10.setMaxwordcount(50);
-		config10.setMinwordCount(0);
+		config10.setEntriesCount(700);
+		config10.setMaxwordcount(15);
+		config10.setMinwordCount(5);
 		Configuration.add(config10);
 	}
 	

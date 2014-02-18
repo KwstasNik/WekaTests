@@ -122,7 +122,10 @@ public class Generator {
 				  
 			  }
 				 Writer writerTst = new OutputStreamWriter(new FileOutputStream(file1test), "UTF-8");	
-				 BufferedWriter out2 = new BufferedWriter(writerTst);		 		 
+				 BufferedWriter out2 = new BufferedWriter(writerTst);	
+				  out2.write("@relation messages\n" +
+						  "@attribute message string\n"+
+						  "@attribute class "+Config.CLASSES_Arff+"\n @data \n\n");
 				  for (int i=0;i<limit+1;i++){
 						
 			
