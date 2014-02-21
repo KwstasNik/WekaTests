@@ -38,13 +38,13 @@ public class DatesInfo {
 
 class Message
 {
-	private double msgClass;
+	private Double msgClass;
 	//Type is 0 for post 1 for comment
 	private int Type;
-	public double getMsgClass() {
+	public Double getMsgClass() {
 		return msgClass;
 	}
-	public void setMsgClass(double msgClass) {
+	public void setMsgClass(Double msgClass) {
 		this.msgClass = msgClass;
 	}
 	public int getType() {
@@ -74,12 +74,19 @@ class UserCalendar
 	{
 		DateTime curDateTime=Date;
 		int i=0;
-		while(curDateTime.isBefore(userCalendar.get(i).getDay()))
+		try{
+		while(Date.isAfter(userCalendar.get(i).getDay()))
 		{
 			curDateTime=userCalendar.get(i).getDay();
-			
+			i++;
 		}
-		
+		}
+		catch (Exception E)
+		{
+			E.printStackTrace();
+			System.out.println(Date);
+		}
+		if (i==0){i=1;};
 	ArrayList<Message> curMsgList=userCalendar.get(i-1).getMessageLst();
 	if(curMsgList==null){
 		ArrayList<Message> msglst=new ArrayList<Message>();

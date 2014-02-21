@@ -33,11 +33,20 @@ public class DatesHelper {
 		while (currentDay.isBefore(stop_date))
 		{
 			DatesInfo di=new DatesInfo();
-			di.setDay(start_date);
+			di.setDay(currentDay);
 			
 			dateLst.add(di);
 		//	di.setMessageLst(messageLst);
-			currentDay.plusDays(constantDays);
+			currentDay=currentDay.plusDays(constantDays);
+		}
+		DateTime lastDate=dateLst.get(dateLst.size()-1).getDay();
+		//to Fix
+		if(Integer.parseInt(lastDate.toString("MM"))<31)
+		{
+			DatesInfo di=new DatesInfo();
+		di.setDay(lastDate.plusDays(1));
+		
+			dateLst.add(di);
 		}
 		return dateLst;
 	}
