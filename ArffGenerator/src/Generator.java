@@ -26,14 +26,22 @@ public class Generator {
 	static List<List<messageEntry> > messageEntryListPackEntries=new   ArrayList<List<messageEntry> >();
 	static messageEntry RandomArray []=new  messageEntry[20000];
 	static int training = 0;
+	static int datesAndUserId = 0;
+	static int stemmed = 0;
+
 	static int total = 0;
 	static Config configur;
+	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-
+		 JOptionPane optionPane4= new JOptionPane(
+				   "Save?",
+				    JOptionPane.QUESTION_MESSAGE,
+				    JOptionPane.YES_NO_OPTION);
+		 stemmed =optionPane4.showConfirmDialog(optionPane4,  "Do you want your data Stemmed ?");
 		setup();
 		createFiles();
 	}
@@ -51,6 +59,15 @@ public class Generator {
 				    JOptionPane.QUESTION_MESSAGE,
 				    JOptionPane.YES_NO_OPTION);
 		int split=optionPane2.showConfirmDialog(optionPane2,  "Create Test arff?");
+		
+		
+		 JOptionPane optionPane3= new JOptionPane(
+				   "Create Test arff?",
+				    JOptionPane.QUESTION_MESSAGE,
+				    JOptionPane.YES_NO_OPTION);
+		 datesAndUserId =optionPane3.showConfirmDialog(optionPane3,  "Include dates and userId?");
+		
+		
 		 
 		 final String file1 = "C:\\Users\\Kwstas\\Desktop\\wekaTest\\" +name+
 		 		".arff";
@@ -66,9 +83,12 @@ public class Generator {
 			 Writer writer = new OutputStreamWriter(new FileOutputStream(file1), "UTF-8");	
 			 BufferedWriter out1 = new BufferedWriter(writer);		 		 
 		//	BufferedWriter outRateGreeklish = new BufferedWriter(writer);  
-		  out1.write("@relation messages\n" +
-				  "@attribute message string\n"+
-				  "@attribute class "+Config.CLASSES_Arff+"\n @data \n\n");
+			  out1.write("@relation messages\n" +
+					  "@attribute message string\n"+
+					  "@attribute class "+Config.CLASSES_Arff+"\n" +
+					  "@attribute date string\n"+
+					  "@attribute userid string\n"+
+					  " @data \n\n");
 		  String temp = null;
 		  Random ran=new Random();
 		  for (int l=0;l<messageEntryListPackEntries.size();l++){
@@ -108,7 +128,11 @@ public class Generator {
 			 
 		  temp =compactRandomArrayList.get(i).getMessage();
 		  temp = temp.replace("\n", " ");
-		  out1.write("'" + compactRandomArrayList.get(i).getMes_class() + "'" + "," + "'" + temp + "'" + "," + "\n"); 
+		  out1.write("'" +temp  + "'" + "," + "'" +  compactRandomArrayList.get(i).getMes_class()+ "'" + "," ); 
+		  if(datesAndUserId==0){
+		  out1.write(  "'" + compactRandomArrayList.get(i).getDate() + "'" + ","+ "'" + compactRandomArrayList.get(i).getUsrId() + "'" + ",");
+		  }
+		  out1.write("\n");
 			  }
 		  
 		  }
@@ -125,14 +149,21 @@ public class Generator {
 				 BufferedWriter out2 = new BufferedWriter(writerTst);	
 				  out2.write("@relation messages\n" +
 						  "@attribute message string\n"+
-						  "@attribute class "+Config.CLASSES_Arff+"\n @data \n\n");
+						  "@attribute class "+Config.CLASSES_Arff+"\n" +
+						  "@attribute date string\n"+
+						  "@attribute userid string\n"+
+						  " @data \n\n");
+				  
 				  for (int i=0;i<limit+1;i++){
 						
 			
 			  temp =compactRandomArrayList.get(i).getMessage();
 			  temp = temp.replace("\n", " ");
-			  out2.write("'" + compactRandomArrayList.get(i).getMes_class() + "'" + "," + "'" + temp + "'" + "," + "\n"); 
-			  
+			  out2.write("'" +temp  + "'" + "," + "'" +  compactRandomArrayList.get(i).getMes_class()+ "'" + "," ); 
+			  if(datesAndUserId==0){
+			  out2.write(  "'" + compactRandomArrayList.get(i).getDate() + "'" + ","+ "'" + compactRandomArrayList.get(i).getUsrId() + "'" + ",");
+			  }
+			  out2.write("\n");
 				 
 			  }
 			  out2.close();
@@ -180,11 +211,28 @@ public class Generator {
 		
 		try{
 			 System.out.println("processing comments for "+configur.getConfiguration().get(c).getClassDescription());
+			 
+			 
+			 StemmerHelper sHelper=new StemmerHelper();
 			  while ( rs.next() ) {
 				  //System.out.println(rs.getString("username") + "," + rs.getString("content"));
 				  messageEntry messageEntry=new messageEntry();
-				  messageEntry.setMes_class(rs.getString("message").replaceAll("\n", " "));
-				  messageEntry.setMessage(rs.getString("class"));
+				  
+				  if(stemmed==0)
+				  {
+			    messageEntry.setMessage(sHelper.getStemmedLine(rs.getString("message").replaceAll("\n", " ")));
+						
+						
+				  }
+				  else{
+				  messageEntry.setMessage(rs.getString("message").replaceAll("\n", " "));
+				  }
+				  messageEntry.setMes_class(rs.getString("class"));
+				  
+			//	  if(datesAndUserId==0){
+				  messageEntry.setUsrId(rs.getString("userid"));
+				  messageEntry.setDate(rs.getString("date"));
+				//  }
 				 messageEntryList.add(messageEntry);
 			  }
 			  messageEntryListPackEntries.add(messageEntryList);	
@@ -209,6 +257,10 @@ public class Generator {
 
 class messageEntry
 {
+	private String usrId;
+	
+	private String date;
+	
 private String message;
 
 public String getMessage() {
@@ -225,6 +277,22 @@ public String getMes_class() {
 
 public void setMes_class(String mes_class) {
 	this.mes_class = mes_class;
+}
+
+public String getUsrId() {
+	return usrId;
+}
+
+public void setUsrId(String usrId) {
+	this.usrId = usrId;
+}
+
+public String getDate() {
+	return date;
+}
+
+public void setDate(String date) {
+	this.date = date;
 }
 
 private String mes_class;
