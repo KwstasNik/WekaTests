@@ -49,10 +49,13 @@ import weka.datagenerators.Test;
 import weka.experiment.InstanceQuery;
 public class ClassHelper {
 
-	String DATASOURCE_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\musicOnlyStemmed.arff";
+	String POST_DATASOURCE_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\musicOnlyStemmed.arff";
+	String COMMENT_DATASOURCE_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\musicOnlyStemmed.arff";
+	
 	String MODEL_PATH="";
 	 String OUPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\thesis drafts\\post.sql_RepLinksGreekClean.sql";
-	 Instances	  data ;
+	 Instances	  postdata ;
+	 Instances    commentData;
 	public ClassHelper()
 	{
 		
@@ -72,7 +75,7 @@ public class ClassHelper {
 			 data2.deleteAttributeAt(0);
 			 data2.deleteAttributeAt(1);
 							
-			 data = query.retrieveInstances();
+			 postdata = query.retrieveInstances();
 				
 			
 			 NominalToString flt=new NominalToString();
@@ -100,16 +103,18 @@ public class ClassHelper {
 		 return newInstances;
 	}
 	
-	public void setDatasourcePath(String DATASOURCE_PATH) {
-		this.DATASOURCE_PATH=DATASOURCE_PATH;
-		
-		
+	public void setDatasourcePath(String DATASOURCE_PATH,String COMMENT_DATASOURCE_PATH) {
+		this.POST_DATASOURCE_PATH=DATASOURCE_PATH;
+		this.COMMENT_DATASOURCE_PATH=COMMENT_DATASOURCE_PATH;
 	}
 	
-	public Instances loadFromDatasource(Filter filter,String DATASOURCE_PATH) throws Exception
+	
+	
+	
+	public Instances loadFromPostDatasource(Filter filter,String DATASOURCE_PATH) throws Exception
 	{
 		DataSource sourceTrain = new DataSource(DATASOURCE_PATH);
-		 data = sourceTrain.getDataSet();
+		postdata = sourceTrain.getDataSet();
 		 Instances data2=sourceTrain.getDataSet();
 		 data2.deleteAttributeAt(2);
 		 data2.deleteAttributeAt(2);
@@ -117,21 +122,33 @@ public class ClassHelper {
 		 return newInstances;
 	}
 	
+	public Instances loadFromCommentDatasource(Filter filter,String DATASOURCE_PATH) throws Exception
+	{
+		DataSource sourceTrain = new DataSource(DATASOURCE_PATH);
+		 commentData = sourceTrain.getDataSet();
+		 Instances data2=sourceTrain.getDataSet();
+		 data2.deleteAttributeAt(3);
+		 data2.deleteAttributeAt(3);
+		 Instances newInstances = Filter.useFilter(data2, filter);
+		 return newInstances;
+	}
+	
+	
 	
 	public void setModelPath(String MODEL_PATH) 
 	{
 		this.MODEL_PATH=MODEL_PATH;
 	}
 	
-	public ArrayList<UserInfo> GenerateClassificationData(Instances filteredData,String StartDay,String StopDay,int constantDays,	Classifier cModel ) throws Exception
+	public ArrayList<UserInfo> GenerateClassificationData(Instances filteredPostData,Instances filteredCommentData,String StartDay,String StopDay,int constantDays,	Classifier cModel ) throws Exception
 	{
 		////////////////////////////////////////////////
 		// Test the model
 //		Evaluation eTestTesting = new Evaluation(newTest1);
 		//eTestTesting.evaluateModel(cModel1, newTest1);
 		
-		if (filteredData.classIndex() == -1) {
-			filteredData.setClassIndex(0);
+		if (filteredPostData.classIndex() == -1) {
+			filteredPostData.setClassIndex(0);
 		}
 		
 
@@ -142,18 +159,104 @@ public class ClassHelper {
 		//data.delete(1);
 		ArrayList <InstanceInfo> instInfList=new <InstanceInfo>ArrayList();
 		
-		for (int i = 0; i < filteredData.numInstances(); i++) {
+		for (int i = 0; i < filteredPostData.numInstances(); i++) {
 			InstanceInfo insInfo=new InstanceInfo();
-			insInfo.setDate((data.instance(i).stringValue(2)));
-			insInfo.setUserId(data.instance(i).stringValue(3));
-			
+			insInfo.setDate((postdata.instance(i).stringValue(2)));
+			insInfo.setUserId(postdata.instance(i).stringValue(3));
+			insInfo.setInstanceMessage((postdata.instance(i).stringValue(0)));
 			//filteredData.instance(i).deleteAttributeAt(0);
 			//filteredData.instance(i).deleteAttributeAt(1);
 			//filteredData.instance(i).deleteAttributeAt(data.instance(i).numAttributes()-2);
 		
-			insInfo.setInstance(filteredData.instance(i));
+			insInfo.setInstance(filteredPostData.instance(i));
 			instInfList.add(insInfo);
 		}
+		
+		ArrayList <InstanceInfo> instInfListComment=new <InstanceInfo>ArrayList();
+		
+		for (int i = 0; i < filteredCommentData.numInstances(); i++) {
+			InstanceInfo insInfo=new InstanceInfo();
+			insInfo.setDate((commentData.instance(i).stringValue(3)));
+			insInfo.setUserId(commentData.instance(i).stringValue(4));
+			insInfo.setInstanceMessage((commentData.instance(i).stringValue(0)));
+			insInfo.setRelatedPostId((commentData.instance(i).stringValue(2)));
+			
+		
+		
+			insInfo.setInstance(filteredCommentData.instance(i));
+			instInfListComment.add(insInfo);
+		}
+		
+		
+		
+	
+			
+		   setPostsInuserList(instInfList,cModel,usrInfLst);
+		   setCommentsInuserList(instInfListComment,cModel,usrInfLst);
+			
+		
+		
+		
+		
+		
+			  FileOutputStream fout = new FileOutputStream( new File( OUPUT_PATH ) );
+			    PrintWriter out = new PrintWriter(new OutputStreamWriter(fout, "UTF-8"));
+			    DateTime stopDateTime=DateTime.parse(StopDay);
+			    DateTime startDateTime=DateTime.parse(StartDay);
+				
+			for (UserInfo userInfo : usrInfLst) {
+			     ArrayList<Post> pstLstList=userInfo.getPostList();
+			     ArrayList<Comment> cmtLstList=userInfo.getCommentList();
+				  
+			     UserCalendar uCalendar=new UserCalendar(StartDay, StopDay, constantDays);
+			     
+			    for (Post post : pstLstList) {
+			    	//Type for posts is 0
+			    	DateTime postDateTime=DateTime.parse(post.getDate());
+			    	
+			    	if((postDateTime.isAfter(startDateTime)||
+			    			postDateTime.isEqual(startDateTime))&&
+			    			(postDateTime.isBefore(stopDateTime)||
+			    			postDateTime.isEqual(stopDateTime))
+			    		
+			    			){
+			    
+			    		//uCalendar.inserMessageToPeriod(post.getMes_class(),postDateTime, 0,post.getMessageString());
+			    		uCalendar.insertPostToPeriod(post);
+			    		
+			    	}
+				}
+			    
+			    for (Comment comment : cmtLstList) {
+			    	//Type for posts is 0
+			    	DateTime commentDateTime=DateTime.parse(comment.getDate());
+			    	
+			    	if((commentDateTime.isAfter(startDateTime)||
+			    			commentDateTime.isEqual(startDateTime))&&
+			    			(commentDateTime.isBefore(stopDateTime)||
+			    					commentDateTime.isEqual(stopDateTime))
+			    		
+			    			){
+			    
+			    		//uCalendar.inserMessageToPeriod(post.getMes_class(),postDateTime, 0,post.getMessageString());
+			    		uCalendar.insertCommentToPeriod(comment);
+			    		
+			    	}
+				}
+			    
+			    userInfo.setUserCalendr(uCalendar.getUserCalendar());
+			   	}
+			
+			
+			
+		
+		return usrInfLst;
+	}
+
+
+	
+	private ArrayList<UserInfo>  setPostsInuserList(ArrayList <InstanceInfo> instInfList,Classifier cModel,	ArrayList<UserInfo> usrInfLst) throws Exception
+	{
 		int count=0;
 		for (int i = 0; i < instInfList.size(); i++) {
 			
@@ -172,16 +275,19 @@ public class ClassHelper {
 			boolean found=false;
 			int c=0;
 			
+			//Posts
+			
 			while(c<usrInfLst.size()&& found==false) {
 			if (usrInfLst.get(c).getId()==usrIdString)
 			{
+				
 				Post post=new Post();
 				post.setDate(instInfList.get(i).getDate());
 				try {
-					post.setMessageString(instInfList.get(i).getInstance().stringValue(1));
+					post.setMessageString(instInfList.get(i).getInstanceMessage());
 					
 				} catch (Exception e) {
-					post.setMessageString("error");
+					post.setMessageString("error in MessageParsing");
 					
 				}
 				post.setMes_class(pred);
@@ -195,51 +301,86 @@ public class ClassHelper {
 			{
 				UserInfo usi=new UserInfo();
 				usi.setPostList(new ArrayList<Post>());
+				usi.setCommentList(new ArrayList<Comment>());
 				usi.setId(usrIdString);
 				
 				Post post=new Post();
-				post.setDate(data.instance(i).stringValue(2));
-				post.setMessageString(data.instance(i).stringValue(3));
+				post.setDate(postdata.instance(i).stringValue(2));
+				post.setMessageString(instInfList.get(i).getInstanceMessage());
 				post.setMes_class(pred);
 				usi.getPostList().add(post);
 				usrInfLst.add(usi);
 			}
+			
 		}
-	
-		
-			  FileOutputStream fout = new FileOutputStream( new File( OUPUT_PATH ) );
-			    PrintWriter out = new PrintWriter(new OutputStreamWriter(fout, "UTF-8"));
-			    DateTime stopDateTime=DateTime.parse(StopDay);
-			    DateTime startDateTime=DateTime.parse(StartDay);
-				
-			for (UserInfo userInfo : usrInfLst) {
-			     ArrayList<Post> pstLstList=userInfo.getPostList();
-			     UserCalendar uCalendar=new UserCalendar(StartDay, StopDay, constantDays);
-			     
-			    for (Post post : pstLstList) {
-			    	//Type for posts is 0
-			    	DateTime postDateTime=DateTime.parse(post.getDate());
-			    	
-			    	if((postDateTime.isAfter(startDateTime)||
-			    			postDateTime.isEqual(startDateTime))&&
-			    			(postDateTime.isBefore(stopDateTime)||
-			    			postDateTime.isEqual(stopDateTime))
-			    		
-			    			){
-			    
-			    		uCalendar.inserMessageToPeriod(post.getMes_class(),postDateTime, 0);
-			    	}
-				}
-			    
-			    userInfo.setUserCalendr(uCalendar.getUserCalendar());
-			   	}
-			
-			
-			
 		
 		return usrInfLst;
 	}
 
-
+	
+	private ArrayList<UserInfo>  setCommentsInuserList(ArrayList <InstanceInfo> instInfList,Classifier cModel,	ArrayList<UserInfo> usrInfLst) throws Exception
+	{
+		int count=0;
+		for (int i = 0; i < instInfList.size(); i++) {
+			
+	
+			
+			double pred = cModel.classifyInstance(instInfList.get(i).getInstance());
+			
+			System.out.println(pred);
+			System.out.println(count);
+			if (pred==0.0)
+			{
+				count++;
+			}
+		//	System.out.println(data.instance(i)+"-"+pred);
+			String usrIdString=instInfList.get(i).getUserId();
+			boolean found=false;
+			
+			int c=0;
+			
+			//Comments
+			
+			while(c<usrInfLst.size()&& found==false) {
+			if (usrInfLst.get(c).getId()==usrIdString)
+			{
+				Comment comment=new Comment();
+				comment.setDate(instInfList.get(i).getDate());
+				comment.setMes_class(pred);
+				comment.setRelatedpostId(instInfList.get(i).getRelatedPostId());
+		    
+				try {
+					comment.setMessageString(instInfList.get(i).getInstanceMessage());
+					
+				} catch (Exception e) {
+					comment.setMessageString("error in MessageParsing");
+					
+				}
+				
+				usrInfLst.get(c).getCommentList().add(comment);
+				found=true;
+				
+			}
+			c++;	
+			}
+			if(found==false)
+			{
+				UserInfo usi=new UserInfo();
+				usi.setPostList(new ArrayList<Post>());
+				usi.setCommentList(new ArrayList<Comment>());
+				usi.setId(usrIdString);
+				
+				Comment comment=new Comment();
+				comment.setDate(postdata.instance(i).stringValue(2));
+				comment.setMessageString(instInfList.get(i).getInstanceMessage());
+				comment.setMes_class(pred);
+				usi.getCommentList().add(comment);
+				usrInfLst.add(usi);
+			}
+			
+		}
+		
+		return usrInfLst;
+	}
 
 }

@@ -335,7 +335,7 @@ private static String clearSpecial(String string) {
     	if(string.contains("^")){ string = string.replace("^", " "); }
     	if(string.contains("@")){ string = string.replace("@", " "); }
     	if(string.contains("-")){ string = string.replace("-", " "); }
-      	if(string.contains("€")){ string = string.replace("€", " "); }
+      	if(string.contains("β‚¬")){ string = string.replace("β‚¬", " "); }
        
     	
     	if(string.contains("-")){ string = string.replace("-", " "); }
@@ -348,42 +348,42 @@ private static String clearSpecial(String string) {
     	if(string.contains("[")){ string = string.replace("[", " "); }
     	if(string.contains("]")){ string = string.replace("]", " "); }
     	if(string.contains("\"")){ string = string.replace("\"", " "); }
-    	if(string.contains("\\η")){ string = string.replace("\\η", " "); }
-    	if(string.contains("\\τ")){ string = string.replace("\\τ", " "); }
+    	if(string.contains("\\Ξ·")){ string = string.replace("\\Ξ·", " "); }
+    	if(string.contains("\\Ο„")){ string = string.replace("\\Ο„", " "); }
     	if(string.contains(";")){ string = string.replace(";", " "); }
     	if(string.contains("?")){ string = string.replace("?", " "); }
     	if(string.contains("&")){ string = string.replace("&", " "); }
     	if(string.contains("<")){ string = string.replace("<", " "); }
     	if(string.contains(">")){ string = string.replace(">", " "); }
     	if(string.contains(",")){ string = string.replace(",", " "); }
-    	if(string.contains("΄")){ string = string.replace("΄", " "); }
-    	if(string.contains("«")){ string = string.replace("«", " "); }
-    	if(string.contains("»")){ string = string.replace("»", " "); }
+    	if(string.contains("Ξ„")){ string = string.replace("Ξ„", " "); }
+    	if(string.contains("Β«")){ string = string.replace("Β«", " "); }
+    	if(string.contains("Β»")){ string = string.replace("Β»", " "); }
     	if(string.contains("?")){ string = string.replace("?", " "); }
     	if(string.contains(":")){ string = string.replace(":", " "); }
-    	if(string.contains("ς")){ string = string.replace("ς", "σ"); }
+    	if(string.contains("Ο‚")){ string = string.replace("Ο‚", "Οƒ"); }
     	
-      	if(string.contains(" – ")){ string = string.replace(" – ", " "); }
-      	if(string.contains(" κ ")){ string = string.replace(" κ ", " "); }
-      	if(string.contains(" σ ")){ string = string.replace(" σ ", " "); }
-       	if(string.contains(" πω ")){ string = string.replace(" πω ", " "); }
+      	if(string.contains(" β€“ ")){ string = string.replace(" β€“ ", " "); }
+      	if(string.contains(" ΞΊ ")){ string = string.replace(" ΞΊ ", " "); }
+      	if(string.contains(" Οƒ ")){ string = string.replace(" Οƒ ", " "); }
+       	if(string.contains(" Ο€Ο‰ ")){ string = string.replace(" Ο€Ο‰ ", " "); }
         
-    	if(string.contains("ά")){ string = string.replace("ά", "α"); }
-    	if(string.contains("έ")){ string = string.replace("έ", "ε"); }
-    	if(string.contains("ό")){ string = string.replace("ό", "ο"); }
-    	if(string.contains("ί")){ string = string.replace("ί", "ι"); }
-    	if(string.contains("ή")){ string = string.replace("ή", "η"); }
-    	if(string.contains("ύ")){ string = string.replace("ύ", "υ"); }
-    	if(string.contains("ώ")){ string = string.replace("ώ", "ω"); }
-    	if(string.contains("ϊ")){ string = string.replace("ϊ", "ι"); }
-    	if(string.contains("ΐ")){ string = string.replace("ΐ", "ι"); }
-    	if(string.contains("ϋ")){ string = string.replace("ϋ", "υ"); }
-    	if(string.contains("ΰ")){ string = string.replace("ΰ", "υ"); }
+    	if(string.contains("Ξ¬")){ string = string.replace("Ξ¬", "Ξ±"); }
+    	if(string.contains("Ξ­")){ string = string.replace("Ξ­", "Ξµ"); }
+    	if(string.contains("Ο")){ string = string.replace("Ο", "ΞΏ"); }
+    	if(string.contains("Ξ―")){ string = string.replace("Ξ―", "ΞΉ"); }
+    	if(string.contains("Ξ®")){ string = string.replace("Ξ®", "Ξ·"); }
+    	if(string.contains("Ο")){ string = string.replace("Ο", "Ο…"); }
+    	if(string.contains("Ο")){ string = string.replace("Ο", "Ο‰"); }
+    	if(string.contains("Ο")){ string = string.replace("Ο", "ΞΉ"); }
+    	if(string.contains("Ξ")){ string = string.replace("Ξ", "ΞΉ"); }
+    	if(string.contains("Ο‹")){ string = string.replace("Ο‹", "Ο…"); }
+    	if(string.contains("Ξ°")){ string = string.replace("Ξ°", "Ο…"); }
     	
-    	if(string.contains("”")){ string = string.replace("”", " "); }
-    	if(string.contains("“")){ string = string.replace("“", " "); }
-    	if(string.contains("…")){ string = string.replace("…", " "); }
-    	if(string.contains("‘")){ string = string.replace("‘", " "); }
+    	if(string.contains("β€")){ string = string.replace("β€", " "); }
+    	if(string.contains("β€")){ string = string.replace("β€", " "); }
+    	if(string.contains("β€¦")){ string = string.replace("β€¦", " "); }
+    	if(string.contains("β€")){ string = string.replace("β€", " "); }
         
     	
     
@@ -405,37 +405,37 @@ private static String cleanStopWords(String string)
 			string = string.replace(stoW," ");
 			}
 		//clean stopwords extra not contained in dictionary
-		if(string.contains(" τουσ ")){ string = string.replace(" τουσ ", " "); }
-		if(string.contains(" τη ")){ string = string.replace(" τη ", " "); }
-		if(string.contains(" μου ")){ string = string.replace(" μου ", " "); }		
-		if(string.contains(" στα ")){ string = string.replace(" στα ", " "); }		
-		if(string.contains(" οταν ")){ string = string.replace(" οταν ", " "); }		
-		if(string.contains(" τισ ")){ string = string.replace(" τισ ", " "); }		
-		if(string.contains(" του ")){ string = string.replace(" του ", " "); }		
-		if(string.contains(" καποιοσ ")){ string = string.replace(" καποιοσ ", " "); }
-		if(string.contains(" καποιοι ")){ string = string.replace(" καποιοι ", " "); }
-		if(string.contains(" καποιες ")){ string = string.replace(" καποιες ", " "); }
-		if(string.contains(" καποια ")){ string = string.replace(" καποια ", " "); }
-		if(string.contains(" εγω ")){ string = string.replace(" εγω ", " "); }
-		if(string.contains(" εσυ ")){ string = string.replace(" εσυ ", " "); }		
-		if(string.contains(" αυτος ")){ string = string.replace(" αυτος ", " "); }
-		if(string.contains(" συ ")){ string = string.replace(" συ ", " "); }
-		if(string.contains(" σου ")){ string = string.replace(" σου ", " "); }
-		if(string.contains(" στο ")){ string = string.replace(" στο ", " "); }
-		if(string.contains(" στισ ")){ string = string.replace(" στισ ", " "); }
-		if(string.contains(" εγω ")){ string = string.replace(" εγω ", " "); }
-		if(string.contains(" στουσ ")){ string = string.replace(" στουσ ", " "); }		
-		if(string.contains(" τι ")){ string = string.replace(" τι ", " "); }
-		if(string.contains(" τη ")){ string = string.replace(" τη ", " "); }
-		if(string.contains(" να ")){ string = string.replace(" να ", " "); }
+		if(string.contains(" Ο„ΞΏΟ…Οƒ ")){ string = string.replace(" Ο„ΞΏΟ…Οƒ ", " "); }
+		if(string.contains(" Ο„Ξ· ")){ string = string.replace(" Ο„Ξ· ", " "); }
+		if(string.contains(" ΞΌΞΏΟ… ")){ string = string.replace(" ΞΌΞΏΟ… ", " "); }		
+		if(string.contains(" ΟƒΟ„Ξ± ")){ string = string.replace(" ΟƒΟ„Ξ± ", " "); }		
+		if(string.contains(" ΞΏΟ„Ξ±Ξ½ ")){ string = string.replace(" ΞΏΟ„Ξ±Ξ½ ", " "); }		
+		if(string.contains(" Ο„ΞΉΟƒ ")){ string = string.replace(" Ο„ΞΉΟƒ ", " "); }		
+		if(string.contains(" Ο„ΞΏΟ… ")){ string = string.replace(" Ο„ΞΏΟ… ", " "); }		
+		if(string.contains(" ΞΊΞ±Ο€ΞΏΞΉΞΏΟƒ ")){ string = string.replace(" ΞΊΞ±Ο€ΞΏΞΉΞΏΟƒ ", " "); }
+		if(string.contains(" ΞΊΞ±Ο€ΞΏΞΉΞΏΞΉ ")){ string = string.replace(" ΞΊΞ±Ο€ΞΏΞΉΞΏΞΉ ", " "); }
+		if(string.contains(" ΞΊΞ±Ο€ΞΏΞΉΞµΟ‚ ")){ string = string.replace(" ΞΊΞ±Ο€ΞΏΞΉΞµΟ‚ ", " "); }
+		if(string.contains(" ΞΊΞ±Ο€ΞΏΞΉΞ± ")){ string = string.replace(" ΞΊΞ±Ο€ΞΏΞΉΞ± ", " "); }
+		if(string.contains(" ΞµΞ³Ο‰ ")){ string = string.replace(" ΞµΞ³Ο‰ ", " "); }
+		if(string.contains(" ΞµΟƒΟ… ")){ string = string.replace(" ΞµΟƒΟ… ", " "); }		
+		if(string.contains(" Ξ±Ο…Ο„ΞΏΟ‚ ")){ string = string.replace(" Ξ±Ο…Ο„ΞΏΟ‚ ", " "); }
+		if(string.contains(" ΟƒΟ… ")){ string = string.replace(" ΟƒΟ… ", " "); }
+		if(string.contains(" ΟƒΞΏΟ… ")){ string = string.replace(" ΟƒΞΏΟ… ", " "); }
+		if(string.contains(" ΟƒΟ„ΞΏ ")){ string = string.replace(" ΟƒΟ„ΞΏ ", " "); }
+		if(string.contains(" ΟƒΟ„ΞΉΟƒ ")){ string = string.replace(" ΟƒΟ„ΞΉΟƒ ", " "); }
+		if(string.contains(" ΞµΞ³Ο‰ ")){ string = string.replace(" ΞµΞ³Ο‰ ", " "); }
+		if(string.contains(" ΟƒΟ„ΞΏΟ…Οƒ ")){ string = string.replace(" ΟƒΟ„ΞΏΟ…Οƒ ", " "); }		
+		if(string.contains(" Ο„ΞΉ ")){ string = string.replace(" Ο„ΞΉ ", " "); }
+		if(string.contains(" Ο„Ξ· ")){ string = string.replace(" Ο„Ξ· ", " "); }
+		if(string.contains(" Ξ½Ξ± ")){ string = string.replace(" Ξ½Ξ± ", " "); }
 		
-		if(string.contains(" ν’ ")){ string = string.replace(" ν’ ", " "); }
-		if(string.contains(" π ")){ string = string.replace(" π ", " "); }
-		if(string.contains(" αυτον ")){ string = string.replace(" αυτον ", " "); }
-		if(string.contains(" αυτην ")){ string = string.replace(" αυτην ", " "); }
-		if(string.contains(" ν ")){ string = string.replace(" ν ", " "); }
-		if(string.contains(" λ ")){ string = string.replace(" λ ", " "); }
-		if(string.contains(" αυτ ")){ string = string.replace(" αυτ ", " "); }
+		if(string.contains(" Ξ½β€™ ")){ string = string.replace(" Ξ½β€™ ", " "); }
+		if(string.contains(" Ο€ ")){ string = string.replace(" Ο€ ", " "); }
+		if(string.contains(" Ξ±Ο…Ο„ΞΏΞ½ ")){ string = string.replace(" Ξ±Ο…Ο„ΞΏΞ½ ", " "); }
+		if(string.contains(" Ξ±Ο…Ο„Ξ·Ξ½ ")){ string = string.replace(" Ξ±Ο…Ο„Ξ·Ξ½ ", " "); }
+		if(string.contains(" Ξ½ ")){ string = string.replace(" Ξ½ ", " "); }
+		if(string.contains(" Ξ» ")){ string = string.replace(" Ξ» ", " "); }
+		if(string.contains(" Ξ±Ο…Ο„ ")){ string = string.replace(" Ξ±Ο…Ο„ ", " "); }
 		
 		
 		  
@@ -455,7 +455,7 @@ private static String cleanStopWords(String string)
 }
 
 private static String spellChecker(String line) throws IOException
-{line="καλημέρα τι κάνεις";
+{line="ΞΊΞ±Ξ»Ξ·ΞΌΞ­ΟΞ± Ο„ΞΉ ΞΊΞ¬Ξ½ΞµΞΉΟ‚";
 	StringBuffer newLineBuffer=new StringBuffer();
 	Directory luceneDir = FSDirectory.open(new File("C:\\Users\\Kwstas\\Desktop\\wekaTest\\"));
 SpellChecker sp=new SpellChecker(luceneDir); 
@@ -525,30 +525,30 @@ private static String cleanOrphanLetters (String string)
 	if(string.contains(" z ")){ string = string.replace(" z ", " "); }
 
 	
-	if(string.contains(" α ")){ string = string.replace(" α ", " "); }
-	if(string.contains(" β ")){ string = string.replace(" β ", " "); }
-	if(string.contains(" γ ")){ string = string.replace(" γ ", " "); }
-	if(string.contains(" δ ")){ string = string.replace(" δ ", " "); }
-	if(string.contains(" ε ")){ string = string.replace(" ε ", " "); }
-	if(string.contains(" ζ ")){ string = string.replace(" ζ ", " "); }
-	if(string.contains(" η ")){ string = string.replace(" η ", " "); }
-	if(string.contains(" θ ")){ string = string.replace(" θ ", " "); }
-	if(string.contains(" κ ")){ string = string.replace(" κ ", " "); }
-	if(string.contains(" ι ")){ string = string.replace(" ι ", " "); }
-	if(string.contains(" λ ")){ string = string.replace(" λ ", " "); }
-	if(string.contains(" μ ")){ string = string.replace(" μ ", " "); }
-	if(string.contains(" ν ")){ string = string.replace(" ν ", " "); }
-	if(string.contains(" ξ ")){ string = string.replace(" ξ ", " "); }
-	if(string.contains(" ο ")){ string = string.replace(" ο ", " "); }
-	if(string.contains(" π ")){ string = string.replace(" π ", " "); }
-	if(string.contains(" ρ ")){ string = string.replace(" ρ ", " "); }
-	if(string.contains(" σ ")){ string = string.replace(" σ ", " "); }
-	if(string.contains(" τ ")){ string = string.replace(" τ ", " "); }
-	if(string.contains(" υ ")){ string = string.replace(" υ ", " "); }
-	if(string.contains(" φ ")){ string = string.replace(" φ ", " "); }
-	if(string.contains(" χ ")){ string = string.replace(" χ ", " "); }
-	if(string.contains(" ψ ")){ string = string.replace(" ψ ", " "); }
-	if(string.contains(" ω ")){ string = string.replace(" ω ", " "); }
+	if(string.contains(" Ξ± ")){ string = string.replace(" Ξ± ", " "); }
+	if(string.contains(" Ξ² ")){ string = string.replace(" Ξ² ", " "); }
+	if(string.contains(" Ξ³ ")){ string = string.replace(" Ξ³ ", " "); }
+	if(string.contains(" Ξ΄ ")){ string = string.replace(" Ξ΄ ", " "); }
+	if(string.contains(" Ξµ ")){ string = string.replace(" Ξµ ", " "); }
+	if(string.contains(" Ξ¶ ")){ string = string.replace(" Ξ¶ ", " "); }
+	if(string.contains(" Ξ· ")){ string = string.replace(" Ξ· ", " "); }
+	if(string.contains(" ΞΈ ")){ string = string.replace(" ΞΈ ", " "); }
+	if(string.contains(" ΞΊ ")){ string = string.replace(" ΞΊ ", " "); }
+	if(string.contains(" ΞΉ ")){ string = string.replace(" ΞΉ ", " "); }
+	if(string.contains(" Ξ» ")){ string = string.replace(" Ξ» ", " "); }
+	if(string.contains(" ΞΌ ")){ string = string.replace(" ΞΌ ", " "); }
+	if(string.contains(" Ξ½ ")){ string = string.replace(" Ξ½ ", " "); }
+	if(string.contains(" ΞΎ ")){ string = string.replace(" ΞΎ ", " "); }
+	if(string.contains(" ΞΏ ")){ string = string.replace(" ΞΏ ", " "); }
+	if(string.contains(" Ο€ ")){ string = string.replace(" Ο€ ", " "); }
+	if(string.contains(" Ο ")){ string = string.replace(" Ο ", " "); }
+	if(string.contains(" Οƒ ")){ string = string.replace(" Οƒ ", " "); }
+	if(string.contains(" Ο„ ")){ string = string.replace(" Ο„ ", " "); }
+	if(string.contains(" Ο… ")){ string = string.replace(" Ο… ", " "); }
+	if(string.contains(" Ο† ")){ string = string.replace(" Ο† ", " "); }
+	if(string.contains(" Ο‡ ")){ string = string.replace(" Ο‡ ", " "); }
+	if(string.contains(" Ο ")){ string = string.replace(" Ο ", " "); }
+	if(string.contains(" Ο‰ ")){ string = string.replace(" Ο‰ ", " "); }
 
 	
 

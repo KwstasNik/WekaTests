@@ -46,8 +46,9 @@ public class WekaTraining {
 		//VARIABLES
 		int previousExpId=0;
 		String DATASOURCE_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\training3_3_10_7Stemmed.arff";
-		String DATASOURCE_PATH_Test="C:\\Users\\Kwstas\\Desktop\\wekaTest\\testTestStemmed.arff";
-
+		String DATASOURCE_PATH_Test="C:\\Users\\Kwstas\\Desktop\\wekaTest\\trainingAllStemmed.arff";
+		
+		
 	//	String METHOD="NaiveBayesMultinomial" Cannot handle multi-valued nominal class;
 		String METHOD="SMO";
 	//	String METHOD="NaiveBayes";

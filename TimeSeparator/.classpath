@@ -7,5 +7,7 @@
 	<classpathentry kind="lib" path="C:/Program Files (x86)/MySQL/MySQL Connector J/mysql-connector-java-5.1.26-bin.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files (x86)/lucene-4.6.0/core/lucene-core-4.6.0.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files (x86)/lucene-4.6.0/analysis/common/lucene-analyzers-common-4.6.0.jar"/>
+	<classpathentry kind="lib" path="C:/xstream-1.4.7/lib/xstream-1.4.7.jar"/>
+	<classpathentry kind="lib" path="C:/xstream-1.4.7/lib/xstream/kxml2-2.3.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

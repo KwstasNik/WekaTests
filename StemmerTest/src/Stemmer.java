@@ -38,8 +38,8 @@ import java.util.regex.Pattern;
 import org.apache.lucene.analysis.el.GreekStemmer;
 import org.apache.lucene.analysis.util.CharArraySet;
 public class Stemmer {
-	static String INPUT_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\testTest.arff";
-	static String OUPUT_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\testTestStemmed.arff";
+	static String INPUT_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\trainingAll.arff";
+	static String OUPUT_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\trainingAllStemmed.arff";
 	/**
 	 * 
 	 * @param args

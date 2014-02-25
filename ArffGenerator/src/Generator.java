@@ -128,6 +128,9 @@ public class Generator {
 			 
 		  temp =compactRandomArrayList.get(i).getMessage();
 		  temp = temp.replace("\n", " ");
+		  temp = temp.replace("\r", " ");
+		  temp = temp.replace("\t", " ");
+			
 		  out1.write("'" +temp  + "'" + "," + "'" +  compactRandomArrayList.get(i).getMes_class()+ "'" + "," ); 
 		  if(datesAndUserId==0){
 		  out1.write(  "'" + compactRandomArrayList.get(i).getDate() + "'" + ","+ "'" + compactRandomArrayList.get(i).getUsrId() + "'" + ",");
@@ -159,6 +162,8 @@ public class Generator {
 			
 			  temp =compactRandomArrayList.get(i).getMessage();
 			  temp = temp.replace("\n", " ");
+			  temp = temp.replace("\r", " ");
+			  temp = temp.replace("\t", " ");
 			  out2.write("'" +temp  + "'" + "," + "'" +  compactRandomArrayList.get(i).getMes_class()+ "'" + "," ); 
 			  if(datesAndUserId==0){
 			  out2.write(  "'" + compactRandomArrayList.get(i).getDate() + "'" + ","+ "'" + compactRandomArrayList.get(i).getUsrId() + "'" + ",");
