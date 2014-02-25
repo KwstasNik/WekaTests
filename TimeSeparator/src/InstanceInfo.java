@@ -10,6 +10,7 @@ public class InstanceInfo {
 	private Instance instance;
 	private String instanceMessage;
 	private String relatedPostId;
+	private String postId;
 	public InstanceInfo()
 	{
 		
@@ -53,5 +54,13 @@ public class InstanceInfo {
 
 	public void setRelatedPostId(String relatedPostId) {
 		this.relatedPostId = relatedPostId;
+	}
+
+	public String getPostId() {
+		return postId;
+	}
+
+	public void setPostId(String postId) {
+		this.postId = postId;
 	}
 }

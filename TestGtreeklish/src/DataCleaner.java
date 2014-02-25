@@ -41,11 +41,11 @@ public class DataCleaner {
 	/**
 	 * @param args
 	 */
-	static String INPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\gritzal\\allingreekcleanv2GreekOnly.sql";
+	static String INPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\gritzal\\postwithlinks.sql";
 	//static String INPUT_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\training33456.arff";
 	// static String INPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\AssignedParts\\15000to15500Har.txt";
 	 
-	static String OUPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\gritzal\\allingreekcleanv2GreekOnlyClean.sql";
+	static String OUPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\gritzal\\postwithlinksClean.sql";
 	//static String OUPUT_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\training33456Clean.arff";
 	// static String OUPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\AssignedParts\\15000to15500HarOut.txt";
 
@@ -147,11 +147,11 @@ public class DataCleaner {
 		        	try {
 		        		String inString=packedString.toString();
 		        				inString=inString.replaceAll("(.)\\1+", "$1");
-		        			//	inString=clearSpecial(inString);
+		        				inString=clearSpecial(inString);
 		        				//inString="kalimera";
 		        				String greekOriginal=inString;	
-						//String greekOriginal = Parser.getGreek(inString);
-						packedString=new StringBuffer();
+					//	String greekOriginal = Parser.getGreek(inString);
+					//	packedString=new StringBuffer();
 				//		greekOriginal=spellChecker(greekOriginal);
 				        	
 							  cleanStringreek=clearSpecial(greekOriginal);
@@ -452,6 +452,15 @@ private static String cleanStopWords(String string)
  
  
 	return string;
+}
+
+
+private static String CleanEnglish(String string) {
+	
+	if(string.contains("a")){ string = ""; }
+	if(string.contains("b")){ string = ""; }
+
+	return(string);
 }
 
 private static String spellChecker(String line) throws IOException

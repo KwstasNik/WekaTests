@@ -22,6 +22,7 @@ public class UserInfo {
 	private String bio;
 	@XStreamOmitField
 	private ArrayList <Post> PostList;
+	@XStreamOmitField
 	private ArrayList <Comment> CommentList;
 	private ArrayList <DatesInfo> UserCalendr;
 	

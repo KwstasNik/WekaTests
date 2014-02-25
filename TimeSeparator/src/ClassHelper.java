@@ -118,6 +118,8 @@ public class ClassHelper {
 		 Instances data2=sourceTrain.getDataSet();
 		 data2.deleteAttributeAt(2);
 		 data2.deleteAttributeAt(2);
+		 data2.deleteAttributeAt(2);
+			
 		 Instances newInstances = Filter.useFilter(data2, filter);
 		 return newInstances;
 	}
@@ -127,8 +129,10 @@ public class ClassHelper {
 		DataSource sourceTrain = new DataSource(DATASOURCE_PATH);
 		 commentData = sourceTrain.getDataSet();
 		 Instances data2=sourceTrain.getDataSet();
-		 data2.deleteAttributeAt(3);
-		 data2.deleteAttributeAt(3);
+		 data2.deleteAttributeAt(2);
+		 data2.deleteAttributeAt(2);
+		 data2.deleteAttributeAt(2);
+			
 		 Instances newInstances = Filter.useFilter(data2, filter);
 		 return newInstances;
 	}
@@ -151,7 +155,9 @@ public class ClassHelper {
 			filteredPostData.setClassIndex(0);
 		}
 		
-
+		if (filteredCommentData.classIndex() == -1) {
+			filteredCommentData.setClassIndex(0);
+		}
 	
 		ArrayList<UserInfo> usrInfLst=new ArrayList<UserInfo>();
 		//data.deleteAttributeAt(1);
@@ -164,6 +170,8 @@ public class ClassHelper {
 			insInfo.setDate((postdata.instance(i).stringValue(2)));
 			insInfo.setUserId(postdata.instance(i).stringValue(3));
 			insInfo.setInstanceMessage((postdata.instance(i).stringValue(0)));
+			insInfo.setPostId((postdata.instance(i).stringValue(4)));
+			
 			//filteredData.instance(i).deleteAttributeAt(0);
 			//filteredData.instance(i).deleteAttributeAt(1);
 			//filteredData.instance(i).deleteAttributeAt(data.instance(i).numAttributes()-2);
@@ -176,10 +184,10 @@ public class ClassHelper {
 		
 		for (int i = 0; i < filteredCommentData.numInstances(); i++) {
 			InstanceInfo insInfo=new InstanceInfo();
-			insInfo.setDate((commentData.instance(i).stringValue(3)));
-			insInfo.setUserId(commentData.instance(i).stringValue(4));
+			insInfo.setDate((commentData.instance(i).stringValue(2)));
+			insInfo.setUserId(commentData.instance(i).stringValue(3));
 			insInfo.setInstanceMessage((commentData.instance(i).stringValue(0)));
-			insInfo.setRelatedPostId((commentData.instance(i).stringValue(2)));
+			insInfo.setRelatedPostId((commentData.instance(i).stringValue(4)));
 			
 		
 		
@@ -291,6 +299,7 @@ public class ClassHelper {
 					
 				}
 				post.setMes_class(pred);
+				post.setPostId(instInfList.get(i).getPostId());
 				usrInfLst.get(c).getPostList().add(post);
 				found=true;
 				
@@ -308,6 +317,8 @@ public class ClassHelper {
 				post.setDate(postdata.instance(i).stringValue(2));
 				post.setMessageString(instInfList.get(i).getInstanceMessage());
 				post.setMes_class(pred);
+				post.setPostId(instInfList.get(i).getPostId());
+				
 				usi.getPostList().add(post);
 				usrInfLst.add(usi);
 			}
@@ -373,6 +384,8 @@ public class ClassHelper {
 				Comment comment=new Comment();
 				comment.setDate(postdata.instance(i).stringValue(2));
 				comment.setMessageString(instInfList.get(i).getInstanceMessage());
+				comment.setRelatedpostId(instInfList.get(i).getRelatedPostId());
+				
 				comment.setMes_class(pred);
 				usi.getCommentList().add(comment);
 				usrInfLst.add(usi);

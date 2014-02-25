@@ -21,7 +21,7 @@ public class TimeSeparator {
 		// TODO Auto-generated method stub
 			ClassHelper ch=new ClassHelper();
 			
-			Instances filteredData;
+			Instances filteredDataPosts;
 			Instances filteredDataComments;
 			
 			try {
@@ -33,13 +33,13 @@ public class TimeSeparator {
 				Classifier cl=cHelper.getClassifier();
 				//filteredData = ch.loadDataFromDb(filt);
 			//	filteredData=ch.loadFromDatasource(filt,"C:\\Users\\Kwstas\\Desktop\\wekaTest\\musicOnlyStemmed.arff");
-			filteredData=ch.loadFromPostDatasource(filt,"C:\\Users\\Kwstas\\Desktop\\wekaTest\\trainingAllTeststem.arff");
-			filteredDataComments=ch.loadFromPostDatasource(filt,"C:\\Users\\Kwstas\\Desktop\\wekaTest\\trainingAllTeststem.arff");
+			filteredDataPosts=ch.loadFromPostDatasource(filt,"C:\\Users\\Kwstas\\Desktop\\wekaTest\\trainingAllWithIds.arff");
+			filteredDataComments=ch.loadFromCommentDatasource(filt,"C:\\Users\\Kwstas\\Desktop\\wekaTest\\trainingComments.arff");
 			
-			ArrayList<UserInfo> uiArrayList=ch.GenerateClassificationData(filteredData,filteredDataComments, "2009-1-1", "2013-12-30", 7,cl);
-			OutputHelper outputHelper=new OutputHelper("C:\\Users\\Kwstas\\Desktop\\wekaTest\\calendar.txt");
+			ArrayList<UserInfo> uiArrayList=ch.GenerateClassificationData(filteredDataPosts,filteredDataComments, "2009-1-1", "2013-12-30", 7,cl);
+			OutputHelper outputHelper=new OutputHelper("C:\\Users\\Kwstas\\Desktop\\wekaTest\\calendarV2.txt");
 			outputHelper.createCalendarDoc(uiArrayList);
-			outputHelper.createXML(uiArrayList, "C:\\Users\\Kwstas\\Desktop\\wekaTest\\UsersInfo.xml");
+			outputHelper.createXML(uiArrayList, "C:\\Users\\Kwstas\\Desktop\\wekaTest\\UsersInfoV2.xml");
 			
 		
 			

@@ -28,7 +28,8 @@ public class Generator {
 	static int training = 0;
 	static int datesAndUserId = 0;
 	static int stemmed = 0;
-
+	static int isComments=0;
+	
 	static int total = 0;
 	static Config configur;
 	
@@ -42,6 +43,13 @@ public class Generator {
 				    JOptionPane.QUESTION_MESSAGE,
 				    JOptionPane.YES_NO_OPTION);
 		 stemmed =optionPane4.showConfirmDialog(optionPane4,  "Do you want your data Stemmed ?");
+		 
+		 JOptionPane optionPane5= new JOptionPane(
+				   "Comments?",
+				    JOptionPane.QUESTION_MESSAGE,
+				    JOptionPane.YES_NO_OPTION);
+		 isComments =optionPane4.showConfirmDialog(optionPane4,  "Is your arff generated From comments?");
+		 
 		setup();
 		createFiles();
 	}
@@ -87,8 +95,18 @@ public class Generator {
 					  "@attribute message string\n"+
 					  "@attribute class "+Config.CLASSES_Arff+"\n" +
 					  "@attribute date string\n"+
-					  "@attribute userid string\n"+
-					  " @data \n\n");
+					  "@attribute userid string\n");
+			  
+			  if(isComments==0)
+			  {
+				  out1.write( "@attribute relatedPostId string\n");
+			  }
+			  else
+			  {
+				  out1.write( "@attribute postId string\n");
+			  }
+			  
+			  out1.write(" @data \n\n");
 		  String temp = null;
 		  Random ran=new Random();
 		  for (int l=0;l<messageEntryListPackEntries.size();l++){
@@ -135,6 +153,15 @@ public class Generator {
 		  if(datesAndUserId==0){
 		  out1.write(  "'" + compactRandomArrayList.get(i).getDate() + "'" + ","+ "'" + compactRandomArrayList.get(i).getUsrId() + "'" + ",");
 		  }
+		  if(isComments==0)
+		  {
+			  out1.write(  "'" + compactRandomArrayList.get(i).getRelatedPostid() + "'" + ",");
+				
+		  }
+		  else{
+			  out1.write(  "'" + compactRandomArrayList.get(i).getPostid() + "'" + ",");
+				
+		  }
 		  out1.write("\n");
 			  }
 		  
@@ -154,8 +181,17 @@ public class Generator {
 						  "@attribute message string\n"+
 						  "@attribute class "+Config.CLASSES_Arff+"\n" +
 						  "@attribute date string\n"+
-						  "@attribute userid string\n"+
-						  " @data \n\n");
+						  "@attribute userid string\n");
+						  if(isComments==0)
+						  {
+							  out1.write( "@attribute relatedPostId string\n");
+						  }
+						  else
+						  {
+							  out1.write( "@attribute postId string\n");
+						  }
+						  
+						  out1.write(" @data \n\n");
 				  
 				  for (int i=0;i<limit+1;i++){
 						
@@ -167,6 +203,15 @@ public class Generator {
 			  out2.write("'" +temp  + "'" + "," + "'" +  compactRandomArrayList.get(i).getMes_class()+ "'" + "," ); 
 			  if(datesAndUserId==0){
 			  out2.write(  "'" + compactRandomArrayList.get(i).getDate() + "'" + ","+ "'" + compactRandomArrayList.get(i).getUsrId() + "'" + ",");
+			  }
+			  if(isComments==0)
+			  {
+				  out2.write(  "'" + compactRandomArrayList.get(i).getRelatedPostid() + "'" + ",");
+					
+			  }
+			  else{
+				  out2.write(  "'" + compactRandomArrayList.get(i).getPostid() + "'" + ",");
+					
 			  }
 			  out2.write("\n");
 				 
@@ -239,6 +284,15 @@ public class Generator {
 				  messageEntry.setDate(rs.getString("date"));
 				//  }
 				 messageEntryList.add(messageEntry);
+				 
+				 if(isComments==0)
+				 {
+					  messageEntry.setRelatedPostid(rs.getString("postid"));
+				 }
+				 else
+				 {
+					  messageEntry.setPostid(rs.getString("id"));
+				 }
 			  }
 			  messageEntryListPackEntries.add(messageEntryList);	
 		} catch (Exception e) {e.printStackTrace(); System.out.println("Exception during process");}
@@ -262,6 +316,10 @@ public class Generator {
 
 class messageEntry
 {
+	private String postid;
+	
+	private String relatedPostid;
+	
 	private String usrId;
 	
 	private String date;
@@ -298,6 +356,22 @@ public String getDate() {
 
 public void setDate(String date) {
 	this.date = date;
+}
+
+public String getRelatedPostid() {
+	return relatedPostid;
+}
+
+public void setRelatedPostid(String relatedPostid) {
+	this.relatedPostid = relatedPostid;
+}
+
+public String getPostid() {
+	return postid;
+}
+
+public void setPostid(String postid) {
+	this.postid = postid;
 }
 
 private String mes_class;
