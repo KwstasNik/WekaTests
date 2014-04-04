@@ -24,7 +24,7 @@ public class Generator {
 	//static List<String> greek = new ArrayList<String>();
 	//static List<String> greeklish = new ArrayList<String>();
 	static List<List<messageEntry> > messageEntryListPackEntries=new   ArrayList<List<messageEntry> >();
-	static messageEntry RandomArray []=new  messageEntry[20000];
+	static messageEntry RandomArray []=new  messageEntry[500000];
 	static int training = 0;
 	static int datesAndUserId = 0;
 	static int stemmed = 0;
@@ -109,6 +109,7 @@ public class Generator {
 			  out1.write(" @data \n\n");
 		  String temp = null;
 		  Random ran=new Random();
+		  int cou=0;
 		  for (int l=0;l<messageEntryListPackEntries.size();l++){
 			  
 			  List<messageEntry> currnetEntryList=messageEntryListPackEntries.get(l);
@@ -120,10 +121,10 @@ public class Generator {
 			
 		  for(int i= 0; i < numOfEntr/*intGreekList.size()*/; i++ ){
 			  
-			  int position=ran.nextInt(20000);
+			  int position=ran.nextInt(500000);
 			  //find an empty position
 			  while(RandomArray[position]!=null){
-				  position=ran.nextInt(20000);
+				  position=ran.nextInt(500000);
 			  }
 			  
 			  
@@ -154,7 +155,7 @@ public class Generator {
 		  out1.write(  "'" + compactRandomArrayList.get(i).getDate() + "'" + ","+ "'" + compactRandomArrayList.get(i).getUsrId() + "'" + ",");
 		  }
 		  if(isComments==0)
-		  {
+		  {System.out.println(cou);
 			  out1.write(  "'" + compactRandomArrayList.get(i).getRelatedPostid() + "'" + ",");
 				
 		  }
