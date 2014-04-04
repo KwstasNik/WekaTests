@@ -6,6 +6,8 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 
+import weka.gui.beans.OffscreenChartRenderer;
+
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 
@@ -195,6 +197,9 @@ class UserCalendar
 		{
 			curDateTime=userCalendar.get(i).getDay();
 			i++;
+		
+		
+		
 		}
 		}
 		catch (Exception E)

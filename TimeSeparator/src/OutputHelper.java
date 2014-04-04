@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -68,5 +69,30 @@ public void createXML( ArrayList<UserInfo> uiArrayList,String Path) throws FileN
 	OutputStreamWriter    writer = new OutputStreamWriter(new FileOutputStream(new File(Path)),Charset.forName("UTF-8"));
 	xStream.toXML(uil, writer);
 
+}
+
+
+private ArrayList<UserInfo>  clearempty(ArrayList<UserInfo> uiArrayList)
+{
+	System.out.println("Cleaning Unused");
+	double rem=0;
+	for (UserInfo userInfo : uiArrayList) {
+		Iterator<DatesInfo> iterator= userInfo.getUserCalendr().iterator();
+		while(iterator.hasNext()) {
+			DatesInfo dInfo=iterator.next();
+			if ((dInfo.getCommentLst()==null||dInfo.getCommentLst().size()==0)&&(dInfo.getPostLst()==null||dInfo.getPostLst().size()==0))
+			{rem++;
+			iterator.remove();
+			}
+			
+		}
+		System.out.println("Cleaned "+rem);
+		
+	}
+	
+	
+	return uiArrayList;
+	
+	
 }
 }

@@ -20,10 +20,10 @@ public class UserInfo {
 	private  String Location;
 	private String id;
 	private String bio;
-	@XStreamOmitField
 	private ArrayList <Post> PostList;
-	@XStreamOmitField
+
 	private ArrayList <Comment> CommentList;
+	@XStreamOmitField
 	private ArrayList <DatesInfo> UserCalendr;
 	
 	

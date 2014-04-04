@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.rmi.server.UID;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -211,8 +212,9 @@ public class ClassHelper {
 			    PrintWriter out = new PrintWriter(new OutputStreamWriter(fout, "UTF-8"));
 			    DateTime stopDateTime=DateTime.parse(StopDay);
 			    DateTime startDateTime=DateTime.parse(StartDay);
-				
+				int u=0;
 			for (UserInfo userInfo : usrInfLst) {
+				u++;
 			     ArrayList<Post> pstLstList=userInfo.getPostList();
 			     ArrayList<Comment> cmtLstList=userInfo.getCommentList();
 				  
@@ -234,7 +236,9 @@ public class ClassHelper {
 			    		
 			    	}
 				}
-			    
+			    int y=0;
+				System.out.println("user "+userInfo.getId() +" count="+ u);	
+				
 			    for (Comment comment : cmtLstList) {
 			    	//Type for posts is 0
 			    	DateTime commentDateTime=DateTime.parse(comment.getDate());
@@ -250,8 +254,10 @@ public class ClassHelper {
 			    		uCalendar.insertCommentToPeriod(comment);
 			    		
 			    	}
+					System.out.println(y++);	
 				}
-			    
+				System.out.println("user "+userInfo.getId() +" count="+ u);	
+				
 			    userInfo.setUserCalendr(uCalendar.getUserCalendar());
 			   	}
 			
@@ -268,10 +274,13 @@ public class ClassHelper {
 		int count=0;
 		for (int i = 0; i < instInfList.size(); i++) {
 			
-	
-			
-			double pred = cModel.classifyInstance(instInfList.get(i).getInstance());
-			
+			double pred=999 ;
+			//if(instInfList.get(i).getInstance().classValue()==10.0){
+			 pred = cModel.classifyInstance(instInfList.get(i).getInstance());
+		//	}
+		//	else {
+		//		pred=instInfList.get(i).getInstance().classValue();
+		//	}
 			System.out.println(pred);
 			System.out.println(count);
 			if (pred==0.0)
@@ -353,7 +362,8 @@ public class ClassHelper {
 			//Comments
 			
 			while(c<usrInfLst.size()&& found==false) {
-			if (usrInfLst.get(c).getId()==usrIdString)
+				//System.out.print("if "+usrInfLst.get(c).getId()+" equals "+usrIdString+"\n");
+			if (usrInfLst.get(c).getId().trim().contentEquals(usrIdString.trim()))
 			{
 				Comment comment=new Comment();
 				comment.setDate(instInfList.get(i).getDate());
@@ -376,21 +386,27 @@ public class ClassHelper {
 			}
 			if(found==false)
 			{
+				try{
 				UserInfo usi=new UserInfo();
 				usi.setPostList(new ArrayList<Post>());
 				usi.setCommentList(new ArrayList<Comment>());
 				usi.setId(usrIdString);
 				
 				Comment comment=new Comment();
-				comment.setDate(postdata.instance(i).stringValue(2));
+				comment.setDate(commentData.instance(i).stringValue(2));
 				comment.setMessageString(instInfList.get(i).getInstanceMessage());
 				comment.setRelatedpostId(instInfList.get(i).getRelatedPostId());
 				
 				comment.setMes_class(pred);
 				usi.getCommentList().add(comment);
 				usrInfLst.add(usi);
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
 			}
-			
+
 		}
 		
 		return usrInfLst;
