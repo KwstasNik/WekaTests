@@ -41,11 +41,11 @@ public class DataCleaner {
 	/**
 	 * @param args
 	 */
-	static String INPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\gritzal\\postwithlinks.sql";
+	static String INPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\gritzal\\postwithLinksUncleanedP2.sql";
 	//static String INPUT_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\training33456.arff";
 	// static String INPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\AssignedParts\\15000to15500Har.txt";
 	 
-	static String OUPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\gritzal\\postwithlinksClean.sql";
+	static String OUPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\gritzal\\postwithlinksUncleanedCleanV2P2.sql";
 	//static String OUPUT_PATH="C:\\Users\\Kwstas\\Desktop\\wekaTest\\training33456Clean.arff";
 	// static String OUPUT_PATH="C:\\Users\\Kwstas\\DropboxV2\\Dropbox\\AssignedParts\\15000to15500HarOut.txt";
 
@@ -149,9 +149,9 @@ public class DataCleaner {
 		        				inString=inString.replaceAll("(.)\\1+", "$1");
 		        				inString=clearSpecial(inString);
 		        				//inString="kalimera";
-		        				String greekOriginal=inString;	
-					//	String greekOriginal = Parser.getGreek(inString);
-					//	packedString=new StringBuffer();
+		        				//String greekOriginal=inString;	
+					String greekOriginal = Parser.getGreek(inString);
+						packedString=new StringBuffer();
 				//		greekOriginal=spellChecker(greekOriginal);
 				        	
 							  cleanStringreek=clearSpecial(greekOriginal);
@@ -277,6 +277,7 @@ public class DataCleaner {
 		  if (line.contains("http")) {
 		    	//if(IsMatch(line, regexpattern)){
 		        	 c++;
+		             String replacedUri="";
 		      //      String sValue = line.substring(line.indexOf("http"),line.indexOf("'", line.indexOf("http")));
 		          ArrayList<String> links=  returnLinks(line);
 		            for (String sValue : links) {
@@ -285,12 +286,12 @@ public class DataCleaner {
 		            	{
 		            		sValue="http://"+sValue;
 		            	}
-		            String replacedUri=replaceUri(sValue,writer,c);
+		             replacedUri=replaceUri(sValue,writer,c);
 		            try{
 		            line =line.replace(sValue,replacedUri);
 		            }
 		            catch(Exception E)     
-		            {
+		            {replacedUri="Inactive Uri";
 		            	writer.write(c+".REPLACE ERROR "+sValue+"--->"+replacedUri);
 		            }
 		            writer.write(c+". "+sValue+"--->"+replacedUri);
